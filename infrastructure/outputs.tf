@@ -9,3 +9,7 @@ output "location" {
 output "log_analytics_workspace_id" {
   value = module.log_analytics.log_analytics_workspace_id
 }
+
+output "mysql_flexible_server_id" {
+  value = module.mysql.mysql_flexible_server_id
+}

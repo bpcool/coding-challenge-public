@@ -1,5 +1,5 @@
 # ─────────────────────────────
-# modules/log_analytics/main.tf
+# log_analytics
 # ─────────────────────────────
 
 resource "azurerm_log_analytics_workspace" "main" {

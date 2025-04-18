@@ -6,11 +6,14 @@ output "location" {
   value = azurerm_resource_group.main.location
 }
 
-# output "app_subnet_id" {
-#   value = azurerm_subnet.app.id
-# }
+output "network_security_group_id" {
+  value = azurerm_network_security_group.example.id
+}
 
-# output "mysql_subnet_id" {
-#   value = azurerm_subnet.mysql.id
-# }
+output "virtual_network_name" {
+  value = azurerm_virtual_network.main.name
+}
 
+output "virtual_network_id" {
+  value = azurerm_virtual_network.main.id
+}

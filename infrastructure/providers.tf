@@ -8,7 +8,7 @@ terraform {
     }
   }
 
-  backend "azurerm" {}
+  # backend "azurerm" {}
 }
 
 # Configure the Microsoft Azure Provider
