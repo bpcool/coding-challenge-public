@@ -32,6 +32,6 @@ module "container_app" {
 
   mysql_admin_username       = var.mysql_admin_username
   mysql_admin_password       = var.mysql_admin_password
-  mysql_database_name        = var.mysql_database_name
-  mysql_flexible_server_fqdn = var.mysql_flexible_server_fqdn
+  mysql_database_name        = module.mysql.mysql_database_name
+  mysql_flexible_server_fqdn = module.mysql.mysql_flexible_server_fqdn
 }
