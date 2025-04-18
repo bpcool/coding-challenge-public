@@ -13,6 +13,7 @@ resource "azurerm_subnet" "app" {
       actions = ["Microsoft.Network/virtualNetworks/subnets/join/action", "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action"]
     }
   }
+  
 }
 
 resource "azurerm_container_app_environment" "main" {
@@ -21,12 +22,20 @@ resource "azurerm_container_app_environment" "main" {
     resource_group_name        = var.resource_group_name
     log_analytics_workspace_id = var.log_analytics_workspace_id
     infrastructure_subnet_id   = azurerm_subnet.app.id
+
+    tags = {
+    environment = "Development"
+  }
   }
   
 resource "azurerm_user_assigned_identity" "app" {
   name                = "id-teqwerk-app-dev"
   resource_group_name = var.resource_group_name
   location            = var.location
+
+  tags = {
+    environment = "Development"
+  }
 }
 
 # ───────
@@ -50,6 +59,10 @@ resource "azurerm_container_app" "frontend" {
       cpu    = 0.5
       memory = "1Gi"
     }
+  }
+
+  tags = {
+    environment = "Development"
   }
 }
 
@@ -97,5 +110,9 @@ resource "azurerm_container_app" "backend" {
         value = var.mysql_database_name
       }
     }
+  }
+
+  tags = {
+    environment = "Development"
   }
 }
