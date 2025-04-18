@@ -42,7 +42,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns-vn-link" {
 }
 
 resource "azurerm_mysql_flexible_server" "mysqlserver" {
-  name                   = "mysql-fs-teqwerk-dev-westeurope-01"
+  name                   = "mysqlfs-teqwerk-dev-westeurope-01"
   resource_group_name    = var.resource_group_name
   location               = "centralus"  # var.location
   administrator_login    = var.mysql_admin_username
