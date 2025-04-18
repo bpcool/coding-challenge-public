@@ -68,6 +68,7 @@ jobs:
   deploy-to-dev:
     name: Deploy to Dev
     environment: dev
+    needs: terraform
     runs-on: ubuntu-latest
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
