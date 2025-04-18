@@ -44,9 +44,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns-vn-link" {
 resource "azurerm_mysql_flexible_server" "mysqlserver" {
   name                   = "mysql-fs-teqwerk-dev-westeurope-01"
   resource_group_name    = var.resource_group_name
-  location               = var.location
-  administrator_login    = "msqladmin"
-  administrator_password = "H@Sh1CoR3!"
+  location               = "centralus"  # var.location
+  administrator_login    = var.mysql_admin_username
+  administrator_password = var.mysql_admin_password
   backup_retention_days  = 7
   delegated_subnet_id    = azurerm_subnet.mysqlsubnet.id
   private_dns_zone_id    = azurerm_private_dns_zone.mysqldns.id

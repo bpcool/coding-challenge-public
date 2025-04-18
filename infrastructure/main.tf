@@ -13,10 +13,25 @@ module "mysql" {
   virtual_network_id        = module.network.virtual_network_id
   network_security_group_id = module.network.network_security_group_id
   location                  = module.network.location
+  mysql_admin_username      = var.mysql_admin_username
+  mysql_admin_password      = var.mysql_admin_password
 }
 
 module "log_analytics" {
   source              = "./modules/log_analytics"
   resource_group_name = module.network.resource_group_name
   location            = module.network.location
+}
+
+module "container_app" {
+  source                     = "./modules/container_app"
+  resource_group_name        = module.network.resource_group_name
+  location                   = module.network.location
+  log_analytics_workspace_id = module.log_analytics.log_analytics_workspace_id
+  virtual_network_name       = module.network.virtual_network_name
+
+  mysql_admin_username       = var.mysql_admin_username
+  mysql_admin_password       = var.mysql_admin_password
+  mysql_database_name        = var.mysql_database_name
+  mysql_flexible_server_fqdn = var.mysql_flexible_server_fqdn
 }

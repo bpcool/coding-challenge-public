@@ -13,3 +13,7 @@ output "log_analytics_workspace_id" {
 output "mysql_flexible_server_id" {
   value = module.mysql.mysql_flexible_server_id
 }
+
+output "mysql_flexible_server_fqdn" {
+  value = module.mysql.mysql_flexible_server_fqdn
+}

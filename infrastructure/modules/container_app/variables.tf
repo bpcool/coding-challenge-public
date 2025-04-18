@@ -11,11 +11,7 @@ variable "virtual_network_name" {
   type = string
 }
 
-variable "virtual_network_id" {
-  type = string
-}
-
-variable "network_security_group_id" {
+variable "log_analytics_workspace_id" {
   type = string
 }
 
@@ -28,3 +24,12 @@ variable "mysql_admin_password" {
   sensitive = true
 }
 
+variable "mysql_database_name" {
+  type      = string
+  sensitive = true
+}
+
+variable "mysql_flexible_server_fqdn" {
+  type      = string
+  sensitive = true
+}
