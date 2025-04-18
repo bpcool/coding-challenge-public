@@ -1,0 +1,70 @@
+name: Infrastructure Deploy using Terraform with OpenID connect
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_USE_OIDC: true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.6"
+
+      - name: Terraform Init
+        run: |
+          terraform -chdir=infra init \
+            -backend-config="resource_group_name=${{ secrets.BACKEND_AZURE_RESOURCE_GROUP_NAME }}" \
+            -backend-config="storage_account_name=${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_NAME }}" \
+            -backend-config="container_name=${{ secrets.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME }}" \
+            -backend-config="key=terraform.tfstate"
+        
+      - name: Terraform Format
+        id: fmt
+        run: terraform -chdir=infra fmt -check
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform -chdir=infra validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform -chdir=infra plan -no-color -input=false -out=tfplan
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Terraform Plan Failed');
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1 
+
+      # - name: Terraform Apply
+      #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      #   run: terraform -chdir=infra apply -auto-approve tfplan
