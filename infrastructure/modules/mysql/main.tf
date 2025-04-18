@@ -61,3 +61,11 @@ resource "azurerm_mysql_flexible_server" "mysqlserver" {
 
   depends_on = [azurerm_private_dns_zone_virtual_network_link.dns-vn-link]
 }
+
+resource "azurerm_mysql_flexible_database" "mysqlserverdb" {
+  name                = "patientdb-teqwerk-dev-westeurope-01"
+  resource_group_name = var.resource_group_name
+  server_name         = azurerm_mysql_flexible_server.mysqlserver.name
+  charset             = "utf8"
+  collation           = "utf8_unicode_ci"
+}
