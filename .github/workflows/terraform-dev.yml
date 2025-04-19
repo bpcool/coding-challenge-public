@@ -1,12 +1,6 @@
 name: Infrastructure Deploy using Terraform with OpenID connect
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:

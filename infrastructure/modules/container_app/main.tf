@@ -46,7 +46,7 @@ resource "azurerm_user_assigned_identity" "app" {
 #   template {
 #     container {
 #       name   = "frontend"
-#       image  = "ghcr.io/org/frontend:latest"
+#       image  = "ghcr.io/bpcool/frontend:latest"
 #       cpu    = 0.5
 #       memory = "1Gi"
 #     }
@@ -75,7 +75,7 @@ resource "azurerm_user_assigned_identity" "app" {
 #   template {
 #     container {
 #       name   = "backend"
-#       image  = "ghcr.io/org/backend:latest"
+#       image  = "ghcr.io/bpcool/backend:latest"
 #       cpu    = 0.5
 #       memory = "1Gi"
 
