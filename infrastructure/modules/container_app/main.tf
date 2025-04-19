@@ -56,71 +56,71 @@ resource "azurerm_user_assigned_identity" "app" {
   }
 }
 
-# # ───────
-# # Backend Container App (connected to MySQL)
-# # ───────
-# resource "azurerm_container_app" "backend" {
-#   name                         = "beapp-teqwerk-dev-westeurope-01"
-#   container_app_environment_id = azurerm_container_app_environment.main.id
-#   resource_group_name          = var.resource_group_name
-#   revision_mode                = "Single"
+# ───────
+# Backend Container App (connected to MySQL)
+# ───────
+resource "azurerm_container_app" "backend" {
+  name                         = "beapp-teqwerk-dev-westeurope-01"
+  container_app_environment_id = azurerm_container_app_environment.main.id
+  resource_group_name          = var.resource_group_name
+  revision_mode                = "Single"
 
-#   identity {
-#     type         = "UserAssigned"
-#     identity_ids = [azurerm_user_assigned_identity.app.id]
-#   }
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.app.id]
+  }
 
-#   template {
-#     container {
-#       name   = "backend"
-#       image  = "ghcr.io/bpcool/backend:latest"
-#       cpu    = 0.5
-#       memory = "1Gi"
+  template {
+    container {
+      name   = "backend"
+      image  = "ghcr.io/bpcool/backend:latest"
+      cpu    = 0.5
+      memory = "1Gi"
 
-#       # Env variables for MySQL connection
-#       env {
-#         name  = "DB_HOST"
-#         value = var.mysql_flexible_server_fqdn
-#       }
-#       env {
-#         name  = "DB_PORT"
-#         value = "3306"
-#       }
-#       env {
-#         name  = "DB_USER"
-#         value = var.mysql_admin_username
-#       }
-#       env {
-#         name  = "DB_PASSWORD"
-#         value = var.mysql_admin_password
-#       }
-#       env {
-#         name  = "DB_NAME"
-#         value = var.mysql_database_name
-#       }
-#     }
-#   }
+      # Env variables for MySQL connection
+      env {
+        name  = "DB_HOST"
+        value = var.mysql_flexible_server_fqdn
+      }
+      env {
+        name  = "DB_PORT"
+        value = "3306"
+      }
+      env {
+        name  = "DB_USER"
+        value = var.mysql_admin_username
+      }
+      env {
+        name  = "DB_PASSWORD"
+        value = var.mysql_admin_password
+      }
+      env {
+        name  = "DB_NAME"
+        value = var.mysql_database_name
+      }
+    }
+  }
 
-#   ingress {
-#     external_enabled           = false  # if only internal
-#     allow_insecure_connections = false
-#     target_port                = 8081  # <- ✅ backend listens here
-#     transport                  = "http"
-#     traffic_weight {
-#       latest_revision = true
-#       percentage      = 100
-#     }
-#   }
+  ingress {
+    external_enabled           = false  # if only internal
+    allow_insecure_connections = false
+    target_port                = 8081  # <- ✅ backend listens here
+    transport                  = "http"
+    traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+  }
 
-#   tags = {
-#     environment = "Development"
-#   }
+  tags = {
+    environment = "Development"
+  }
 
-#   depends_on = [
-#     azurerm_container_app_environment.main,
-#     azurerm_user_assigned_identity.app
-#   ]
-# }
+  depends_on = [
+    azurerm_container_app_environment.main,
+    azurerm_user_assigned_identity.app
+  ]
+}
 
 
 
