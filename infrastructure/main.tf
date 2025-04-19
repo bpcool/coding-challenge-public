@@ -11,7 +11,7 @@ module "log_analytics" {
   resource_group_name = module.network.resource_group_name
   location            = module.network.location
 
-  depends_on = [ module.network ]
+  depends_on = [module.network]
 }
 
 module "mysql" {
@@ -24,7 +24,7 @@ module "mysql" {
   mysql_admin_username = var.mysql_admin_username
   mysql_admin_password = var.mysql_admin_password
 
-   depends_on = [ module.log_analytics ]
+  depends_on = [module.log_analytics]
 }
 
 module "container_app" {
@@ -39,5 +39,5 @@ module "container_app" {
   mysql_database_name        = module.mysql.mysql_database_name
   mysql_flexible_server_fqdn = module.mysql.mysql_flexible_server_fqdn
 
-  depends_on = [ module.mysql, module.log_analytics ]
+  depends_on = [module.mysql, module.log_analytics]
 }
