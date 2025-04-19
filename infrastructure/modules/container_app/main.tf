@@ -45,17 +45,16 @@ resource "azurerm_container_app_environment" "main" {
   ]
 
   }
-  
 
-# resource "azurerm_user_assigned_identity" "app" {
-#   name                = "id-teqwerk-app-dev"
-#   resource_group_name = var.resource_group_name
-#   location            = var.location
+resource "azurerm_user_assigned_identity" "app" {
+  name                = "id-teqwerk-app-dev"
+  resource_group_name = var.resource_group_name
+  location            = var.location
 
-#   tags = {
-#     environment = "Development"
-#   }
-# }
+  tags = {
+    environment = "Development"
+  }
+}
 
 # # ───────
 # # Backend Container App (connected to MySQL)
