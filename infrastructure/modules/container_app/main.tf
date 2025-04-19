@@ -153,7 +153,7 @@ resource "azurerm_container_app" "frontend" {
       # with http for testing
       env {
         name  = "BACKEND_URL"
-        value = "http://${azurerm_container_app.backend.name}:8081"
+        value = "http://beapp-teqwerk-dev-westeurope-01.internal:8081"
       }
 
     }
