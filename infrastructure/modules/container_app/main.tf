@@ -107,7 +107,20 @@ resource "azurerm_container_app" "frontend" {
         value = "https://${azurerm_container_app.backend.name}.${var.location}.azurecontainerapps.io"
       }
     }
+
   }
+
+  ingress {
+    allow_insecure_connections = false
+    external_enabled           = true
+    target_port                = 443
+    transport                  = "https"
+    traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+  }
+
 
   tags = {
     environment = "Development"
