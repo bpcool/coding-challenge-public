@@ -74,6 +74,17 @@ resource "azurerm_container_app" "backend" {
     }
   }
 
+  ingress {
+  external_enabled           = false  # if only internal
+  allow_insecure_connections = false
+  target_port                = 8081  # <- ✅ backend listens here
+  transport                  = "http"
+  traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+}
+
   tags = {
     environment = "Development"
   }
@@ -113,8 +124,8 @@ resource "azurerm_container_app" "frontend" {
   ingress {
     allow_insecure_connections = false
     external_enabled           = true
-    target_port                = 443
-    transport                  = "https"
+    target_port                = 80
+    transport                  = "http"
     traffic_weight {
       latest_revision = true
       percentage      = 100
