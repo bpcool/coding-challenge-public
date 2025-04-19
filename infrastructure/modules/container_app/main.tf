@@ -108,6 +108,11 @@ resource "azurerm_container_app" "backend" {
   tags = {
     environment = "Development"
   }
+
+  depends_on = [
+    azurerm_container_app_environment.main,
+    azurerm_user_assigned_identity.app
+  ]
 }
 
 
@@ -156,4 +161,10 @@ resource "azurerm_container_app" "frontend" {
   tags = {
     environment = "Development"
   }
+
+  depends_on = [
+    azurerm_container_app.backend,
+    azurerm_container_app_environment.main,
+    azurerm_user_assigned_identity.app
+  ]
 }
