@@ -5,7 +5,6 @@ resource "azurerm_subnet" "app" {
   virtual_network_name = var.virtual_network_name
   address_prefixes     = ["10.0.4.0/23"]
 
-
 #   delegation {
 #   name = "delegation"
 #   service_delegation {
@@ -23,10 +22,10 @@ resource "azurerm_container_app_environment" "main" {
     location                   = var.location
     resource_group_name        = var.resource_group_name
     log_analytics_workspace_id = var.log_analytics_workspace_id
-    infrastructure_subnet_id   = azurerm_subnet.app.id
+    # infrastructure_subnet_id   = azurerm_subnet.app.id
 
-    internal_load_balancer_enabled = true
-    zone_redundancy_enabled        = false
+    # internal_load_balancer_enabled = true
+    # zone_redundancy_enabled        = false
 
     tags = {
     environment = "Development"
@@ -39,6 +38,7 @@ resource "azurerm_container_app_environment" "main" {
 
   }
   
+
 resource "azurerm_user_assigned_identity" "app" {
   name                = "id-teqwerk-app-dev"
   resource_group_name = var.resource_group_name
@@ -95,15 +95,15 @@ resource "azurerm_container_app" "backend" {
   }
 
   ingress {
-  external_enabled           = false  # if only internal
-  allow_insecure_connections = false
-  target_port                = 8081  # <- ✅ backend listens here
-  transport                  = "http"
-  traffic_weight {
+    external_enabled           = false  # if only internal
+    allow_insecure_connections = false
+    target_port                = 8081  # <- ✅ backend listens here
+    transport                  = "http"
+    traffic_weight {
       latest_revision = true
       percentage      = 100
     }
-}
+  }
 
   tags = {
     environment = "Development"
