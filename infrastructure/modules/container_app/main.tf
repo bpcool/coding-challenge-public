@@ -124,54 +124,61 @@ resource "azurerm_container_app" "backend" {
 
 
 
-# # ───────
-# # Frontend Container App
-# # ───────
-# resource "azurerm_container_app" "frontend" {
-#   name                         = "feapp-teqwerk-dev-westeurope-01"
-#   container_app_environment_id = azurerm_container_app_environment.main.id
-#   resource_group_name          = var.resource_group_name
-#   revision_mode                = "Single"
+# ───────
+# Frontend Container App
+# ───────
+resource "azurerm_container_app" "frontend" {
+  name                         = "feapp-teqwerk-dev-westeurope-01"
+  container_app_environment_id = azurerm_container_app_environment.main.id
+  resource_group_name          = var.resource_group_name
+  revision_mode                = "Single"
 
-#   identity {
-#     type         = "UserAssigned"
-#     identity_ids = [azurerm_user_assigned_identity.app.id]
-#   }
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.app.id]
+  }
 
-#   template {
-#     container {
-#       name   = "frontend"
-#       image  = "ghcr.io/bpcool/frontend:latest"
-#       cpu    = 0.5
-#       memory = "1Gi"
+  template {
+    container {
+      name   = "frontend"
+      image  = "ghcr.io/bpcool/frontend:latest"
+      cpu    = 0.5
+      memory = "1Gi"
 
-#       env {
-#         name  = "BACKEND_URL"
-#         value = "https://${azurerm_container_app.backend.name}.${var.location}.azurecontainerapps.io"
-#       }
-#     }
+      # env {
+      #   name  = "BACKEND_URL"
+      #   value = "https://${azurerm_container_app.backend.name}.${var.location}.azurecontainerapps.io"
+      # }
 
-#   }
+      # with http for testing
+      env {
+        name  = "BACKEND_URL"
+        value = "http://${azurerm_container_app.backend.name}:8081"
+      }
 
-#   ingress {
-#     allow_insecure_connections = false
-#     external_enabled           = true
-#     target_port                = 80
-#     transport                  = "http"
-#     traffic_weight {
-#       latest_revision = true
-#       percentage      = 100
-#     }
-#   }
+    }
+
+  }
+
+  ingress {
+    allow_insecure_connections = false
+    external_enabled           = true
+    target_port                = 80
+    transport                  = "http"
+    traffic_weight {
+      latest_revision = true
+      percentage      = 100
+    }
+  }
 
 
-#   tags = {
-#     environment = "Development"
-#   }
+  tags = {
+    environment = "Development"
+  }
 
-#   depends_on = [
-#     azurerm_container_app.backend,
-#     azurerm_container_app_environment.main,
-#     azurerm_user_assigned_identity.app
-#   ]
-# }
+  depends_on = [
+    azurerm_container_app.backend,
+    azurerm_container_app_environment.main,
+    azurerm_user_assigned_identity.app
+  ]
+}

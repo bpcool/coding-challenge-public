@@ -1,5 +1,6 @@
 const backendUrl = '__BACKEND_URL__';
 
+
 async function fetchPatients() {
     const response = await fetch(`${backendUrl}/patients`);
     const patients = await response.json();
