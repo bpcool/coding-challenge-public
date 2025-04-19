@@ -5,15 +5,16 @@ resource "azurerm_subnet" "app" {
   virtual_network_name = var.virtual_network_name
   address_prefixes     = ["10.0.4.0/23"]
 
-  delegation {
-  name = "delegation"
-  service_delegation {
-    name = "Microsoft.App/environments"
-    actions = [
-      "Microsoft.Network/virtualNetworks/subnets/action"
-    ]
-  }
-}
+
+#   delegation {
+#   name = "delegation"
+#   service_delegation {
+#     name = "Microsoft.App/environments"
+#     actions = [
+#       "Microsoft.Network/virtualNetworks/subnets/action"
+#     ]
+#   }
+# }
 
 }
 
