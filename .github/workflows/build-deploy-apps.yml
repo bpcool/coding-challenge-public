@@ -1,0 +1,78 @@
+name: Build and Deploy App Containers
+
+on:
+  workflow_dispatch:
+
+    # on:
+    #     push:
+    #       branches:
+    #         - main
+    #     pull_request:
+    #       branches:
+    #         - main
+    #     workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    env:
+      GHCR_REPO: ghcr.io/${{ github.repository_owner }}
+      RESOURCE_GROUP: rg-teqwerk-hospital
+      LOCATION: westeurope
+      CONTAINERAPPS_ENVIRONMENT: env-teqwerk-app
+      FRONTEND_IMAGE: frontend
+      BACKEND_IMAGE: backend
+      FRONTEND_APP_NAME: app-teqwerk-frontend
+      BACKEND_APP_NAME: app-teqwerk-backend
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Frontend Image
+        run: |
+          docker build -t $GHCR_REPO/$FRONTEND_IMAGE:latest ./frontend
+          docker push $GHCR_REPO/$FRONTEND_IMAGE:latest
+
+      - name: Build & Push Backend Image
+        run: |
+          docker build -t $GHCR_REPO/$BACKEND_IMAGE:latest ./backend
+          docker push $GHCR_REPO/$BACKEND_IMAGE:latest
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Backend App
+        run: |
+          az containerapp update \
+            --name $BACKEND_APP_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --image $GHCR_REPO/$BACKEND_IMAGE:latest \
+            --environment $CONTAINERAPPS_ENVIRONMENT \
+            --set-env-vars \
+              DB_USER=${{ secrets.MYSQL_ADMIN_USERNAME }} \
+              DB_PASSWORD=${{ secrets.MYSQL_ADMIN_PASSWORD }} \
+              DB_HOST=${{ secrets.MYSQL_HOST }} \
+              DB_NAME=todos
+
+      - name: Deploy Frontend App
+        run: |
+          az containerapp update \
+            --name $FRONTEND_APP_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --image $GHCR_REPO/$FRONTEND_IMAGE:latest \
+            --environment $CONTAINERAPPS_ENVIRONMENT \
+            --set-env-vars BACKEND_URL=https://$BACKEND_APP_NAME.$LOCATION.azurecontainerapps.io
