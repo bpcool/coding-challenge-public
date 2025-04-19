@@ -2,16 +2,9 @@
 # MySQL 
 # ────────
 
-# Temp fix since MySQL not available in this region
-resource "azurerm_resource_group" "mysql" {
-  name     = "rgmysql-teqwerk-dev-centralus-01"
-  location = "centralus"
-}
-
-
 resource "azurerm_subnet" "mysqlsubnet" {
-  name                 = "example-sn"
-  resource_group_name  = azurerm_resource_group.mysql.name     #var.resource_group_name
+  name                 = "mysqlsubnet-01"
+  resource_group_name  = var.resource_group_name
   virtual_network_name = var.virtual_network_name
   address_prefixes     = ["10.0.2.0/24"]
   service_endpoints    = ["Microsoft.Storage"]
@@ -30,7 +23,7 @@ resource "azurerm_subnet" "mysqlsubnet" {
 
 resource "azurerm_private_dns_zone" "mysqldns" {
   name                = "privatelink.mysql.database.azure.com"
-  resource_group_name = azurerm_resource_group.mysql.name  # var.resource_group_name
+  resource_group_name =  var.resource_group_name
 
   tags = {
     environment = "Development"
@@ -41,7 +34,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns-vn-link" {
   name                  = "mysql-vn-link"
   private_dns_zone_name = azurerm_private_dns_zone.mysqldns.name
   virtual_network_id    = var.virtual_network_id
-  resource_group_name   = azurerm_resource_group.mysql.name   # var.resource_group_name
+  resource_group_name   = var.resource_group_name
 
   tags = {
     environment = "Development"
@@ -50,8 +43,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns-vn-link" {
 
 resource "azurerm_mysql_flexible_server" "mysqlserver" {
   name                   = "mysqlfs-teqwerk-dev-westeurope-01"
-  resource_group_name    = azurerm_resource_group.mysql.name    # var.resource_group_name
-  location               = "centralus"  # var.location
+  resource_group_name    = var.resource_group_name
+  location               = var.location
   administrator_login    = var.mysql_admin_username
   administrator_password = var.mysql_admin_password
   backup_retention_days  = 7
@@ -71,7 +64,7 @@ resource "azurerm_mysql_flexible_server" "mysqlserver" {
 
 resource "azurerm_mysql_flexible_database" "mysqlserverdb" {
   name                = "patientdb-teqwerk-dev-westeurope-01"
-  resource_group_name = azurerm_resource_group.mysql.name              # var.resource_group_name
+  resource_group_name = var.resource_group_name
   server_name         = azurerm_mysql_flexible_server.mysqlserver.name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"

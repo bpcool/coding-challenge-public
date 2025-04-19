@@ -1,6 +1,6 @@
 variable "location" {
   type    = string
-  default = "westeurope"
+  default = "centralus"
 }
 
 variable "mysql_admin_username" {
