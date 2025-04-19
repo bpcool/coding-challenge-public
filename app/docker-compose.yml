@@ -24,8 +24,8 @@ services:
       context: ./frontend
     ports:
       - "8080:80"
-    environment:
-      - BACKEND_URL=http://backend:8081
+    # environment:
+    #   - BACKEND_URL=http://backend:8081
     networks:
       - default
   

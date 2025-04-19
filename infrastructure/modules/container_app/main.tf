@@ -29,81 +29,81 @@ resource "azurerm_user_assigned_identity" "app" {
   }
 }
 
-# ───────
-# Frontend Container App
-# ───────
-resource "azurerm_container_app" "frontend" {
-  name                         = "feapp-teqwerk-dev-westeurope-01"
-  container_app_environment_id = azurerm_container_app_environment.main.id
-  resource_group_name          = var.resource_group_name
-  revision_mode                = "Single"
+# # ───────
+# # Frontend Container App
+# # ───────
+# resource "azurerm_container_app" "frontend" {
+#   name                         = "feapp-teqwerk-dev-westeurope-01"
+#   container_app_environment_id = azurerm_container_app_environment.main.id
+#   resource_group_name          = var.resource_group_name
+#   revision_mode                = "Single"
 
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.app.id]
-  }
+#   identity {
+#     type         = "UserAssigned"
+#     identity_ids = [azurerm_user_assigned_identity.app.id]
+#   }
 
-  template {
-    container {
-      name   = "frontend"
-      image  = "ghcr.io/org/frontend:latest"
-      cpu    = 0.5
-      memory = "1Gi"
-    }
-  }
+#   template {
+#     container {
+#       name   = "frontend"
+#       image  = "ghcr.io/org/frontend:latest"
+#       cpu    = 0.5
+#       memory = "1Gi"
+#     }
+#   }
 
-  tags = {
-    environment = "Development"
-  }
-}
+#   tags = {
+#     environment = "Development"
+#   }
+# }
 
 
-# ───────
-# Backend Container App (connected to MySQL)
-# ───────
-resource "azurerm_container_app" "backend" {
-  name                         = "beapp-teqwerk-dev-westeurope-01"
-  container_app_environment_id = azurerm_container_app_environment.main.id
-  resource_group_name          = var.resource_group_name
-  revision_mode                = "Single"
+# # ───────
+# # Backend Container App (connected to MySQL)
+# # ───────
+# resource "azurerm_container_app" "backend" {
+#   name                         = "beapp-teqwerk-dev-westeurope-01"
+#   container_app_environment_id = azurerm_container_app_environment.main.id
+#   resource_group_name          = var.resource_group_name
+#   revision_mode                = "Single"
 
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.app.id]
-  }
+#   identity {
+#     type         = "UserAssigned"
+#     identity_ids = [azurerm_user_assigned_identity.app.id]
+#   }
 
-  template {
-    container {
-      name   = "backend"
-      image  = "ghcr.io/org/backend:latest"
-      cpu    = 0.5
-      memory = "1Gi"
+#   template {
+#     container {
+#       name   = "backend"
+#       image  = "ghcr.io/org/backend:latest"
+#       cpu    = 0.5
+#       memory = "1Gi"
 
-      # Env variables for MySQL connection
-      env {
-        name  = "DB_HOST"
-        value = var.mysql_flexible_server_fqdn
-      }
-      env {
-        name  = "DB_PORT"
-        value = "3306"
-      }
-      env {
-        name  = "DB_USER"
-        value = var.mysql_admin_username
-      }
-      env {
-        name  = "DB_PASSWORD"
-        value = var.mysql_admin_password
-      }
-      env {
-        name  = "DB_NAME"
-        value = var.mysql_database_name
-      }
-    }
-  }
+#       # Env variables for MySQL connection
+#       env {
+#         name  = "DB_HOST"
+#         value = var.mysql_flexible_server_fqdn
+#       }
+#       env {
+#         name  = "DB_PORT"
+#         value = "3306"
+#       }
+#       env {
+#         name  = "DB_USER"
+#         value = var.mysql_admin_username
+#       }
+#       env {
+#         name  = "DB_PASSWORD"
+#         value = var.mysql_admin_password
+#       }
+#       env {
+#         name  = "DB_NAME"
+#         value = var.mysql_database_name
+#       }
+#     }
+#   }
 
-  tags = {
-    environment = "Development"
-  }
-}
+#   tags = {
+#     environment = "Development"
+#   }
+# }

@@ -3,15 +3,6 @@ name: Build and Deploy App Containers
 on:
   workflow_dispatch:
 
-    # on:
-    #     push:
-    #       branches:
-    #         - main
-    #     pull_request:
-    #       branches:
-    #         - main
-    #     workflow_dispatch:
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -19,13 +10,13 @@ jobs:
 
     env:
       GHCR_REPO: ghcr.io/${{ github.repository_owner }}
-      RESOURCE_GROUP: rg-teqwerk-hospital
+      RESOURCE_GROUP: rg-teqwerk-dev-westeurope-01
       LOCATION: westeurope
-      CONTAINERAPPS_ENVIRONMENT: env-teqwerk-app
+      CONTAINERAPPS_ENVIRONMENT: appenv-teqwerk-dev-westeurope-01
       FRONTEND_IMAGE: frontend
       BACKEND_IMAGE: backend
-      FRONTEND_APP_NAME: app-teqwerk-frontend
-      BACKEND_APP_NAME: app-teqwerk-backend
+      FRONTEND_APP_NAME: feapp-teqwerk-dev-westeurope-01
+      BACKEND_APP_NAME: beapp-teqwerk-dev-westeurope-01
 
     steps:
       - name: Checkout Code
@@ -66,7 +57,9 @@ jobs:
               DB_USER=${{ secrets.MYSQL_ADMIN_USERNAME }} \
               DB_PASSWORD=${{ secrets.MYSQL_ADMIN_PASSWORD }} \
               DB_HOST=${{ secrets.MYSQL_HOST }} \
-              DB_NAME=todos
+              DB_PORT=3306 \
+              DB_NAME="patientdb-teqwerk-dev-westeurope-01"
+            #   DB_NAME=${{ secrets.MYSQL_DATABASE }}
 
       - name: Deploy Frontend App
         run: |
