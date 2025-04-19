@@ -27,7 +27,7 @@ resource "azurerm_container_app_environment" "main" {
     log_analytics_workspace_id = var.log_analytics_workspace_id
     infrastructure_subnet_id   = azurerm_subnet.app.id
 
-    internal_load_balancer_enabled = true
+    internal_load_balancer_enabled = false
     zone_redundancy_enabled        = false
 
     workload_profile {
