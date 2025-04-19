@@ -10,15 +10,15 @@ resource "azurerm_resource_group" "main" {
   }
 }
 
-resource "azurerm_network_security_group" "example" {
-  name                = "security-group-teqwerk-dev-westeurope-01"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+# resource "azurerm_network_security_group" "example" {
+#   name                = "security-group-teqwerk-dev-westeurope-01"
+#   location            = azurerm_resource_group.main.location
+#   resource_group_name = azurerm_resource_group.main.name
 
-   tags = {
-    environment = "Development"
-  }
-}
+#    tags = {
+#     environment = "Development"
+#   }
+# }
 
 resource "azurerm_virtual_network" "main" {
   name                = "vnet-teqwerk-dev-westeurope-01"

@@ -17,6 +17,12 @@ resource "azurerm_container_app_environment" "main" {
     tags = {
     environment = "Development"
   }
+
+  depends_on = [
+      azurerm_subnet.app,
+      var.log_analytics_workspace_id
+  ]
+
   }
   
 resource "azurerm_user_assigned_identity" "app" {
