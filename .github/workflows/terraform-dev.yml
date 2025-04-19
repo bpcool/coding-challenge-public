@@ -1,7 +1,18 @@
 name: Infrastructure Deploy using Terraform with OpenID connect
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/**'         # ✅ Only trigger if something in `app/` changes
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/**'
+  workflow_dispatch:      # ✅ Manual trigger option
+
 
 permissions:
   id-token: write

@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'app/**'         # ✅ Only trigger if something in `app/` changes
   pull_request:
     branches:
       - main
-  workflow_dispatch:
+    paths:
+      - 'app/**'
+  workflow_dispatch:      # ✅ Manual trigger option
 
 jobs:
   build-and-deploy:
