@@ -3,7 +3,18 @@ resource "azurerm_subnet" "app" {
   name                 = "teqwerk-app-subnet-westeurop-01"
   resource_group_name  = var.resource_group_name
   virtual_network_name = var.virtual_network_name
-  address_prefixes     = ["10.0.4.0/22"]
+  address_prefixes     = ["10.0.4.0/23"]
+
+  delegation {
+  name = "delegation"
+  service_delegation {
+    name = "Microsoft.App/environments"
+    actions = [
+      "Microsoft.Network/virtualNetworks/subnets/action"
+    ]
+  }
+}
+
 }
 
 resource "azurerm_container_app_environment" "main" {
@@ -12,6 +23,9 @@ resource "azurerm_container_app_environment" "main" {
     resource_group_name        = var.resource_group_name
     log_analytics_workspace_id = var.log_analytics_workspace_id
     infrastructure_subnet_id   = azurerm_subnet.app.id
+
+    internal_load_balancer_enabled = true
+    zone_redundancy_enabled        = false
 
     tags = {
     environment = "Development"
