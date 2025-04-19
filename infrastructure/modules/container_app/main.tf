@@ -161,7 +161,7 @@ resource "azurerm_container_app" "frontend" {
   }
 
   ingress {
-    allow_insecure_connections = false
+    allow_insecure_connections = true  # should set to false for prod
     external_enabled           = true
     target_port                = 80
     transport                  = "http"
