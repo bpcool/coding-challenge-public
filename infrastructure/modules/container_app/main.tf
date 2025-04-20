@@ -145,19 +145,12 @@ resource "azurerm_container_app" "frontend" {
       cpu    = 0.5
       memory = "1Gi"
 
-      # env {
-      #   name  = "BACKEND_URL"
-      #   value = "https://${azurerm_container_app.backend.name}.${var.location}.azurecontainerapps.io"
-      # }
-
       # with http for testing
       env {
         name  = "BACKEND_URL"
-        value = "https://beapp-teqwerk-dev-westeurope-01.${var.location}.azurecontainerapps.io"    # Prod
+        value = "https://${azurerm_container_app.backend.latest_revision_fqdn}"
       }
-
     }
-
   }
 
   ingress {
