@@ -29,7 +29,6 @@ func initDB() {
 	dbName := os.Getenv("DB_NAME")
 	dbHost := os.Getenv("DB_HOST")
 
-	// Load SSL certificate
 	rootCertPool := x509.NewCertPool()
 	pem, err := ioutil.ReadFile("DigiCertGlobalRootCA.crt.pem")
 	if err != nil {
@@ -39,7 +38,6 @@ func initDB() {
 		log.Fatal("Failed to append certificate to root CA pool")
 	}
 
-	// Register TLS config
 	err = mysql.RegisterTLSConfig("custom", &tls.Config{
 		RootCAs: rootCertPool,
 	})
@@ -47,7 +45,6 @@ func initDB() {
 		log.Fatalf("Failed to register TLS config: %v", err)
 	}
 
-	// Format DSN with TLS enabled
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?tls=custom", dbUser, dbPassword, dbHost, dbName)
 
 	db, err = sql.Open("mysql", dsn)
@@ -55,7 +52,6 @@ func initDB() {
 		log.Fatal(err)
 	}
 
-	// Optional: verify connection
 	if err = db.Ping(); err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
@@ -67,7 +63,19 @@ func initDB() {
 	statement.Exec()
 }
 
+func enableCORS(w http.ResponseWriter, r *http.Request) {
+	// Replace "*" with your frontend URL in production
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
 func getPatients(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
 	rows, err := db.Query("SELECT id, full_name, department, bed_number FROM patient")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,10 +89,16 @@ func getPatients(w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&patient.ID, &patient.FullName, &patient.Department, &patient.BedNumber)
 		patients = append(patients, patient)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(patients)
 }
 
 func addPatient(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
 	var patient Patient
 	json.NewDecoder(r.Body).Decode(&patient)
 	statement, err := db.Prepare("INSERT INTO patient (full_name, department, bed_number) VALUES (?, ?, ?)")
@@ -97,6 +111,11 @@ func addPatient(w http.ResponseWriter, r *http.Request) {
 }
 
 func deletePatient(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
 	idParam := r.URL.Query().Get("id")
 	if idParam == "" {
 		http.Error(w, "Missing id parameter", http.StatusBadRequest)
@@ -117,13 +136,19 @@ func deletePatient(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	initDB()
+
 	http.HandleFunc("/patients", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
+		switch r.Method {
+		case http.MethodGet:
 			getPatients(w, r)
-		} else if r.Method == http.MethodPost {
+		case http.MethodPost:
 			addPatient(w, r)
-		} else if r.Method == http.MethodDelete {
+		case http.MethodDelete:
 			deletePatient(w, r)
+		case http.MethodOptions:
+			enableCORS(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 
