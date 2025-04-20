@@ -102,7 +102,7 @@ resource "azurerm_container_app" "backend" {
   }
 
   ingress {
-    external_enabled           = false  # if only internal
+    external_enabled           = true
     allow_insecure_connections = false
     target_port                = 8081  # <- ✅ backend listens here
     transport                  = "auto"
@@ -153,8 +153,7 @@ resource "azurerm_container_app" "frontend" {
       # with http for testing
       env {
         name  = "BACKEND_URL"
-        value = "http://beapp-teqwerk-dev-westeurope-01.internal:8081"    # Prod
-        # value = "http://${azurerm_container_app.backend.name}.internal.${var.container_app_env_domain}:8081"
+        value = "https://beapp-teqwerk-dev-westeurope-01.${var.location}.azurecontainerapps.io"    # Prod
       }
 
     }
