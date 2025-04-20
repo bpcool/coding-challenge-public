@@ -105,7 +105,7 @@ resource "azurerm_container_app" "backend" {
     external_enabled           = false  # if only internal
     allow_insecure_connections = false
     target_port                = 8081  # <- ✅ backend listens here
-    transport                  = "http"
+    transport                  = "auto"
     traffic_weight {
       latest_revision = true
       percentage      = 100
@@ -153,7 +153,8 @@ resource "azurerm_container_app" "frontend" {
       # with http for testing
       env {
         name  = "BACKEND_URL"
-        value = "http://beapp-teqwerk-dev-westeurope-01.internal:8081"
+        value = "http://beapp-teqwerk-dev-westeurope-01.internal:8081"    # Prod
+        # value = "http://${azurerm_container_app.backend.name}.internal.${var.container_app_env_domain}:8081"
       }
 
     }
@@ -161,7 +162,7 @@ resource "azurerm_container_app" "frontend" {
   }
 
   ingress {
-    allow_insecure_connections = true  # should set to false for prod
+    allow_insecure_connections = false  # should set to false for prod
     external_enabled           = true
     target_port                = 80
     transport                  = "http"

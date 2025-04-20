@@ -1,13 +1,17 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 type Patient struct {
@@ -25,12 +29,37 @@ func initDB() {
 	dbName := os.Getenv("DB_NAME")
 	dbHost := os.Getenv("DB_HOST")
 
-	var err error
-	dsn := dbUser + ":" + dbPassword + "@tcp(" + dbHost + ":3306)/" + dbName
+	// Load SSL certificate
+	rootCertPool := x509.NewCertPool()
+	pem, err := ioutil.ReadFile("DigiCertGlobalRootCA.crt.pem")
+	if err != nil {
+		log.Fatalf("Failed to read certificate: %v", err)
+	}
+	if ok := rootCertPool.AppendCertsFromPEM(pem); !ok {
+		log.Fatal("Failed to append certificate to root CA pool")
+	}
+
+	// Register TLS config
+	err = mysql.RegisterTLSConfig("custom", &tls.Config{
+		RootCAs: rootCertPool,
+	})
+	if err != nil {
+		log.Fatalf("Failed to register TLS config: %v", err)
+	}
+
+	// Format DSN with TLS enabled
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?tls=custom", dbUser, dbPassword, dbHost, dbName)
+
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Optional: verify connection
+	if err = db.Ping(); err != nil {
+		log.Fatalf("Database connection failed: %v", err)
+	}
+
 	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS patient (id INT AUTO_INCREMENT PRIMARY KEY, full_name TEXT, department TEXT, bed_number INT)")
 	if err != nil {
 		log.Fatal(err)
