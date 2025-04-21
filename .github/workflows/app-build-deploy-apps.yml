@@ -55,24 +55,24 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Update Backend Container App with New Image
-        run: |
-          echo "App Name: [$BACKEND_APP_NAME]"
-          echo "Image: [$BACKEND_IMAGE]"
-          echo "Resource Group: [$RESOURCE_GROUP_NAME]"
-          echo "Repo: [$GHCR_REPO]"
+      # - name: Update Backend Container App with New Image
+      #   run: |
+      #     echo "App Name: [$BACKEND_APP_NAME]"
+      #     echo "Image: [$BACKEND_IMAGE]"
+      #     echo "Resource Group: [$RESOURCE_GROUP_NAME]"
+      #     echo "Repo: [$GHCR_REPO]"
       
-          az containerapp show --name "$BACKEND_APP_NAME" --resource-group "$RESOURCE_GROUP_NAME"
+      #     az containerapp show --name "$BACKEND_APP_NAME" --resource-group "$RESOURCE_GROUP_NAME"
       
-          az containerapp update \
-            --name "$BACKEND_APP_NAME" \
-            --resource-group "$RESOURCE_GROUP_NAME" \
-            --image "$GHCR_REPO/$BACKEND_IMAGE:latest"
-        env:
-            BACKEND_APP_NAME: ${{ env.BACKEND_APP_NAME }}
-            BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
-            RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
-            AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      #     az containerapp update \
+      #       --name "$BACKEND_APP_NAME" \
+      #       --resource-group "$RESOURCE_GROUP_NAME" \
+      #       --image "$GHCR_REPO/$BACKEND_IMAGE:latest"
+      #   env:
+      #       BACKEND_APP_NAME: ${{ env.BACKEND_APP_NAME }}
+      #       BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
+      #       RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
+      #       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
 
       - name: Update Frontend Container App with New Image
