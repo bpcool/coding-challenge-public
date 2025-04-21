@@ -35,7 +35,7 @@ jobs:
       STORAGE_ACCOUNT_NAME_FOR_UPLOAD: ${{ secrets.STORAGE_ACCOUNT_NAME_FOR_UPLOAD }}
       CONTAINERAPPS_ENVIRONMENT: ${{ secrets.CONTAINERAPPS_ENVIRONMENT }}-dev-${{ secrets.LOCATION }}-01
       FRONTEND_APP_NAME: ${{ secrets.FRONTEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
-      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.BACKEND_APP_NAME }}-01
+      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
       ARM_USE_OIDC: true
 
     steps:
@@ -103,7 +103,7 @@ jobs:
       STORAGE_ACCOUNT_NAME_FOR_UPLOAD: ${{ secrets.STORAGE_ACCOUNT_NAME_FOR_UPLOAD }}
       CONTAINERAPPS_ENVIRONMENT: ${{ secrets.CONTAINERAPPS_ENVIRONMENT }}-dev-${{ secrets.LOCATION }}-01
       FRONTEND_APP_NAME: ${{ secrets.FRONTEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
-      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.BACKEND_APP_NAME }}-01
+      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
       ARM_USE_OIDC: true
 
     steps:
