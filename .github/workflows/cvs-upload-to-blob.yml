@@ -1,0 +1,42 @@
+name: Upload CSV to Azure Blob
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload-blob:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Azure CLI
+        uses: azure/setup-azure@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Download CSV from GitHub raw
+        run: curl -o patient_data.csv https://raw.githubusercontent.com/bpcool/coding-challenge-public/main/patient_data.csv
+
+      - name: Upload CSV to Azure Blob
+        run: |
+          az storage blob upload \
+            --account-name mystorageacct \
+            --container-name data \
+            --name patient_data.csv \
+            --file ./patient_data.csv \
+            --auth-mode login
+    
+      - name: Azure Logout
+        run: |
+            az logout
+        if: always() 
+ 
+# secrets.AZURE_CREDENTIALS
+# az ad sp create-for-rbac --name github-sp-upload --role "Storage Blob Data Contributor" \
+#   --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/providers/Microsoft.Storage/storageAccounts/<STORAGE_ACCOUNT_NAME> \
+#   --sdk-auth

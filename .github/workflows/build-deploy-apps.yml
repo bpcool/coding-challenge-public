@@ -18,15 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
 
+    # will set it in github Actions secrets and variables
     env:
       GHCR_REPO: ghcr.io/${{ github.repository_owner }}
-      RESOURCE_GROUP: rg-teqwerk-dev-westeurope-01
+      RESOURCE_GROUP: rg-teqwerk-dev-centralus-01
       LOCATION: centralus
-      CONTAINERAPPS_ENVIRONMENT: appenv-teqwerk-dev-westeurope-01
+      CONTAINERAPPS_ENVIRONMENT: appenv-teqwerk-dev-centralus-01
       FRONTEND_IMAGE: frontend
       BACKEND_IMAGE: backend
-      FRONTEND_APP_NAME: feapp-teqwerk-dev-westeurope-01
-      BACKEND_APP_NAME: beapp-teqwerk-dev-westeurope-01
+      FRONTEND_APP_NAME: feapp-teqwerk-dev-centralus-01
+      BACKEND_APP_NAME: beapp-teqwerk-dev-centralus-01
 
     steps:
       - name: Checkout Code

@@ -65,7 +65,8 @@ resource "azurerm_container_app" "backend" {
   template {
     container {
       name   = "backend"
-      image  = "ghcr.io/bpcool/backend:latest"
+      image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+      # image  = "ghcr.io/bpcool/backend:latest"
       cpu    = 0.5
       memory = "1Gi"
 
@@ -132,7 +133,8 @@ resource "azurerm_container_app" "frontend" {
   template {
     container {
       name   = "frontend"
-      image  = "ghcr.io/bpcool/frontend:latest"
+      image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+      # image  = "ghcr.io/bpcool/frontend:latest"
       cpu    = 0.5
       memory = "1Gi"
 
