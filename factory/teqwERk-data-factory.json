@@ -1,9 +1,0 @@
-{
-	"name": "teqwERk-data-factory",
-	"location": "centralus",
-	"identity": {
-		"type": "SystemAssigned",
-		"principalId": "b010e9f0-0a76-444a-9147-9baf0ee8b087",
-		"tenantId": "4c9d30b9-be34-4e1e-9a99-115a85f21d38"
-	}
-}
