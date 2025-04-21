@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'app/**'         # ✅ Only trigger if something in `app/` changes
+      - 'app/**'        
   pull_request:
     branches:
       - main
@@ -21,13 +21,13 @@ jobs:
     # will set it in github Actions secrets and variables
     env:
       GHCR_REPO: ghcr.io/${{ github.repository_owner }}
-      RESOURCE_GROUP: rg-teqwerk-dev-centralus-01
-      LOCATION: centralus
-      CONTAINERAPPS_ENVIRONMENT: appenv-teqwerk-dev-centralus-01
+      LOCATION: ${{ secrets.LOCATION }}
+      RESOURCE_GROUP_NAME: ${{ secrets.RESOURCE_GROUP_NAME }}-dev-${{ secrets.LOCATION }}-01
       FRONTEND_IMAGE: frontend
       BACKEND_IMAGE: backend
-      FRONTEND_APP_NAME: feapp-teqwerk-dev-centralus-01
-      BACKEND_APP_NAME: beapp-teqwerk-dev-centralus-01
+      CONTAINERAPPS_ENVIRONMENT: ${{ secrets.CONTAINERAPPS_ENVIRONMENT }}-dev-${{ secrets.LOCATION }}-01
+      FRONTEND_APP_NAME: ${{ secrets.FRONTEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
+      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.BACKEND_APP_NAME }}-01
 
     steps:
       - name: Checkout Code
@@ -49,3 +49,31 @@ jobs:
         run: |
           docker build -t $GHCR_REPO/$BACKEND_IMAGE:latest ./app/backend
           docker push $GHCR_REPO/$BACKEND_IMAGE:latest
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Backend Container App with New Image
+        run: |
+          az containerapp update \
+            --name $BACKEND_APP_NAME \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --image $GHCR_REPO/$BACKEND_IMAGE:latest
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Update Backend Container App with New Image
+        run: |
+          az containerapp update \
+            --name $BACKEND_APP_NAME \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --image $GHCR_REPO/$BACKEND_IMAGE:latest
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Azure Logout
+        run: |
+          az logout
+        if: always()

@@ -35,3 +35,15 @@ variable "mysql_database_name" {
 variable "mysql_flexible_server_fqdn" {
   type      = string
 }
+
+variable "containerapps_environment" {
+  type = string
+}
+
+variable "frontend_app_name" {
+  type = string
+}
+
+variable "backend_app_name" {
+  type = string
+}

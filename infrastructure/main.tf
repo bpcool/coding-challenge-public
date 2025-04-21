@@ -2,8 +2,9 @@
 # Root Module (infrastructure/main.tf)
 # ──────────────────────────────────────────
 module "network" {
-  source   = "./modules/network"
-  location = var.location
+  source              = "./modules/network"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 }
 
 module "log_analytics" {
@@ -60,6 +61,10 @@ module "container_app" {
   mysql_admin_password       = var.mysql_admin_password
   mysql_database_name        = module.mysql.mysql_database_name
   mysql_flexible_server_fqdn = module.mysql.mysql_flexible_server_fqdn
+
+  containerapps_environment = var.containerapps_environment
+  frontend_app_name         = var.frontend_app_name
+  backend_app_name          = var.backend_app_name
 
   depends_on = [module.mysql, module.log_analytics]
 }

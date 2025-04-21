@@ -21,7 +21,7 @@ resource "azurerm_subnet" "app" {
 }
 
 resource "azurerm_container_app_environment" "main" {
-    name                       = "appenv-teqwerk-dev-${var.location}-01"
+    name                       = var.containerapps_environment
     location                   = var.location
     resource_group_name        = var.resource_group_name
     log_analytics_workspace_id = var.log_analytics_workspace_id
@@ -52,7 +52,7 @@ resource "azurerm_container_app_environment" "main" {
 # Backend Container App (connected to MySQL)
 # ───────
 resource "azurerm_container_app" "backend" {
-  name                         = "beapp-teqwerk-dev-${var.location}-01"
+  name                         = var.backend_app_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
@@ -120,7 +120,7 @@ resource "azurerm_container_app" "backend" {
 # Frontend Container App
 # ───────
 resource "azurerm_container_app" "frontend" {
-  name                         = "feapp-teqwerk-dev-${var.location}-01"
+  name                         = var.frontend_app_name
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"

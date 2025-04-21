@@ -16,8 +16,14 @@ jobs:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      LOCATION: ${{ secrets.LOCATION }}
+      RESOURCE_GROUP_NAME: ${{ secrets.RESOURCE_GROUP_NAME }}-dev-${{ secrets.LOCATION }}-01
       MYSQL_ADMIN_USERNAME: ${{ secrets.MYSQL_ADMIN_USERNAME }}
       MYSQL_ADMIN_PASSWORD: ${{ secrets.MYSQL_ADMIN_PASSWORD }}
+      STORAGE_ACCOUNT_NAME_FOR_UPLOAD: ${{ secrets.STORAGE_ACCOUNT_NAME_FOR_UPLOAD }}
+      CONTAINERAPPS_ENVIRONMENT: ${{ secrets.CONTAINERAPPS_ENVIRONMENT }}-dev-${{ secrets.LOCATION }}-01
+      FRONTEND_APP_NAME: ${{ secrets.FRONTEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
+      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.BACKEND_APP_NAME }}-01
       ARM_USE_OIDC: true
 
     steps:
