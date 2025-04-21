@@ -27,7 +27,7 @@ jobs:
       BACKEND_IMAGE: backend
       CONTAINERAPPS_ENVIRONMENT: ${{ secrets.CONTAINERAPPS_ENVIRONMENT }}-dev-${{ secrets.LOCATION }}-01
       FRONTEND_APP_NAME: ${{ secrets.FRONTEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
-      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.BACKEND_APP_NAME }}-01
+      BACKEND_APP_NAME: ${{ secrets.BACKEND_APP_NAME }}-dev-${{ secrets.LOCATION }}-01
 
     steps:
       - name: Checkout Code
@@ -64,7 +64,7 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-          
+
       - name: Update Frontend Container App with New Image
         run: |
           az containerapp update \
