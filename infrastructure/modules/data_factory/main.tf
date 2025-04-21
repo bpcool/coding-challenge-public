@@ -1,6 +1,6 @@
 
 resource "azurerm_storage_account" "storageac-for-migration" {
-  name                     = "storageacteqwerk0dev01"
+  name                     = var.storage_account_name_for_upload
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"

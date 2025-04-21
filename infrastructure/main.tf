@@ -37,6 +37,8 @@ module "data_factory" {
   location             = var.location
   virtual_network_name = module.network.virtual_network_name
 
+  storage_account_name_for_upload = var.storage_account_name_for_upload
+
   mysql_flexible_server_id = module.mysql.mysql_flexible_server_id
   mysql_admin_username     = var.mysql_admin_username
   mysql_admin_password     = var.mysql_admin_password

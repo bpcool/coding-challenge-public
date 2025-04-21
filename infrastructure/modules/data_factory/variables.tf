@@ -9,6 +9,11 @@ variable "resource_group_name" {
   type    = string
 }
 
+variable "storage_account_name_for_upload" {
+  type      = string
+  sensitive = true
+}
+
 variable "virtual_network_name" {
   type    = string
 }
