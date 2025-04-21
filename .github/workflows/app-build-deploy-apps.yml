@@ -68,11 +68,10 @@ jobs:
             --name "$BACKEND_APP_NAME" \
             --resource-group "$RESOURCE_GROUP_NAME" \
             --image "$GHCR_REPO/$BACKEND_IMAGE:latest"
-          env:
+        env:
             BACKEND_APP_NAME: ${{ env.BACKEND_APP_NAME }}
             BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
             RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
-            GHCR_REPO: ${{ env.GHCR_REPO }}
             AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
 
@@ -83,7 +82,10 @@ jobs:
             --resource-group $RESOURCE_GROUP_NAME \
             --image $GHCR_REPO/$FRONTEND_IMAGE:latest
         env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+            FRONTEND_APP_NAME: ${{ env.FRONTEND_APP_NAME }}
+            FRONTEND_IMAGE: ${{ env.FRONTEND_IMAGE }}
+            RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
+            AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: Azure Logout
         run: |
