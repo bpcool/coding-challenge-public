@@ -17,3 +17,7 @@ output "virtual_network_name" {
 output "virtual_network_id" {
   value = azurerm_virtual_network.main.id
 }
+
+output "managed_identity_id" {
+  value = azurerm_user_assigned_identity.app.id
+}

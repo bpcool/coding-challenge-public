@@ -25,11 +25,10 @@ output "mysql_database_name" {
   value = module.mysql.mysql_database_name
 }
 
+output "backend_app_id" {
+  value = module.container_app.backend_app_id
+}
 
-# output "backend_app_id" {
-#   value = module.container_app.backend_app_id
-# }
-
-# output "frontend_app_id" {
-#   value = module.container_app.frontend_app_id
-# }
+output "frontend_app_id" {
+  value = module.container_app.frontend_app_id
+}

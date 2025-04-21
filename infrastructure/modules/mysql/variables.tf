@@ -15,6 +15,10 @@ variable "virtual_network_id" {
   type = string
 }
 
+variable "managed_identity_id" {
+  type = string
+}
+
 # variable "network_security_group_id" {
 #   type = string
 # }

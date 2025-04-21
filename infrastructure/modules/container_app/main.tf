@@ -1,6 +1,6 @@
 
 resource "azurerm_subnet" "app" {
-  name                 = "teqwerk-app-subnet-westeurop-01"
+  name                 = "teqwerk-app-subnet-dev-${var.location}-01"
   resource_group_name  = var.resource_group_name
   virtual_network_name = var.virtual_network_name
   address_prefixes     = ["10.0.1.0/24"]   #["10.0.4.0/23"]
@@ -21,7 +21,7 @@ resource "azurerm_subnet" "app" {
 }
 
 resource "azurerm_container_app_environment" "main" {
-    name                       = "appenv-teqwerk-dev-westeurope-01"
+    name                       = "appenv-teqwerk-dev-${var.location}-01"
     location                   = var.location
     resource_group_name        = var.resource_group_name
     log_analytics_workspace_id = var.log_analytics_workspace_id
@@ -46,28 +46,20 @@ resource "azurerm_container_app_environment" "main" {
 
   }
 
-resource "azurerm_user_assigned_identity" "app" {
-  name                = "id-teqwerk-app-dev"
-  resource_group_name = var.resource_group_name
-  location            = var.location
 
-  tags = {
-    environment = "Development"
-  }
-}
 
 # ───────
 # Backend Container App (connected to MySQL)
 # ───────
 resource "azurerm_container_app" "backend" {
-  name                         = "beapp-teqwerk-dev-westeurope-01"
+  name                         = "beapp-teqwerk-dev-${var.location}-01"
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.app.id]
+    identity_ids = [var.managed_identity_id]
   }
 
   template {
@@ -117,8 +109,7 @@ resource "azurerm_container_app" "backend" {
   }
 
   depends_on = [
-    azurerm_container_app_environment.main,
-    azurerm_user_assigned_identity.app
+    azurerm_container_app_environment.main
   ]
 }
 
@@ -128,14 +119,14 @@ resource "azurerm_container_app" "backend" {
 # Frontend Container App
 # ───────
 resource "azurerm_container_app" "frontend" {
-  name                         = "feapp-teqwerk-dev-westeurope-01"
+  name                         = "feapp-teqwerk-dev-${var.location}-01"
   container_app_environment_id = azurerm_container_app_environment.main.id
   resource_group_name          = var.resource_group_name
   revision_mode                = "Single"
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.app.id]
+    identity_ids = [var.managed_identity_id]
   }
 
   template {
@@ -171,7 +162,6 @@ resource "azurerm_container_app" "frontend" {
 
   depends_on = [
     azurerm_container_app.backend,
-    azurerm_container_app_environment.main,
-    azurerm_user_assigned_identity.app
+    azurerm_container_app_environment.main
   ]
 }

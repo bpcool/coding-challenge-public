@@ -23,8 +23,27 @@ module "mysql" {
   location             = module.network.location
   mysql_admin_username = var.mysql_admin_username
   mysql_admin_password = var.mysql_admin_password
+  managed_identity_id  = module.network.managed_identity_id
 
   depends_on = [module.log_analytics]
+}
+
+
+
+# only enable for Data migration CSV to MySQL
+module "data_factory" {
+  source               = "./modules/data_factory"
+  resource_group_name  = module.network.resource_group_name
+  location             = var.location
+  virtual_network_name = module.network.virtual_network_name
+
+  mysql_flexible_server_id = module.mysql.mysql_flexible_server_id
+  mysql_admin_username     = var.mysql_admin_username
+  mysql_admin_password     = var.mysql_admin_password
+  mysql_database_name      = module.mysql.mysql_database_name
+  mysql_fqdn               = module.mysql.mysql_flexible_server_fqdn
+
+  depends_on = [module.mysql]
 }
 
 module "container_app" {
@@ -33,6 +52,7 @@ module "container_app" {
   location                   = module.network.location
   log_analytics_workspace_id = module.log_analytics.log_analytics_workspace_id
   virtual_network_name       = module.network.virtual_network_name
+  managed_identity_id        = module.network.managed_identity_id
 
   mysql_admin_username       = var.mysql_admin_username
   mysql_admin_password       = var.mysql_admin_password
@@ -41,3 +61,4 @@ module "container_app" {
 
   depends_on = [module.mysql, module.log_analytics]
 }
+
