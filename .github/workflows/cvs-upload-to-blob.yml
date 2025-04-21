@@ -30,7 +30,8 @@ jobs:
             --container-name data \
             --name patient_data.csv \
             --file ./patient_data.csv \
-            --auth-mode login
+            --auth-mode login \
+            --overwrite
     
       - name: Azure Logout
         run: |
