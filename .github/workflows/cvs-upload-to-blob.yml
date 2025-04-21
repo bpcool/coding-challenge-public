@@ -1,4 +1,4 @@
-name: Upload CSV to Azure Blob
+name: Upload github CSV to Azure Blob
 
 on:
   workflow_dispatch:

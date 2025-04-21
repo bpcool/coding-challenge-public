@@ -1,4 +1,4 @@
-name: Infrastructure Deploy using Terraform with OpenID connect
+name: Infrastructure deployment using Terraform with OpenID connect
 
 on:
   push:
