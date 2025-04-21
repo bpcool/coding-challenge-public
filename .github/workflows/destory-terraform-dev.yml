@@ -46,5 +46,11 @@ jobs:
       - name: Terraform Destroy
         run: |
           terraform -chdir=infrastructure destroy -auto-approve \
+            -var="location=${LOCATION}" \
+            -var="resource_group_name=${RESOURCE_GROUP_NAME}" \
             -var="mysql_admin_username=${MYSQL_ADMIN_USERNAME}" \
-            -var="mysql_admin_password=${MYSQL_ADMIN_PASSWORD}"
+            -var="mysql_admin_password=${MYSQL_ADMIN_PASSWORD}" \
+            -var="storage_account_name_for_upload=${STORAGE_ACCOUNT_NAME_FOR_UPLOAD}" \
+            -var="containerapps_environment=${CONTAINERAPPS_ENVIRONMENT}" \
+            -var="frontend_app_name=${FRONTEND_APP_NAME}" \
+            -var="backend_app_name=${BACKEND_APP_NAME}"
