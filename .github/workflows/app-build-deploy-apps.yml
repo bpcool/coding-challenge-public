@@ -57,17 +57,23 @@ jobs:
 
       - name: Update Backend Container App with New Image
         run: |
-          echo "BACKEND_APP_NAME: $BACKEND_APP_NAME"
-          echo "BACKEND_IMAGE: $BACKEND_IMAGE"
-          echo "RESOURCE_GROUP_NAME: $RESOURCE_GROUP_NAME"
-          echo "GHCR_REPO: $GHCR_REPO"
-
+          echo "App Name: [$BACKEND_APP_NAME]"
+          echo "Image: [$BACKEND_IMAGE]"
+          echo "Resource Group: [$RESOURCE_GROUP_NAME]"
+          echo "Repo: [$GHCR_REPO]"
+      
+          az containerapp show --name "$BACKEND_APP_NAME" --resource-group "$RESOURCE_GROUP_NAME"
+      
           az containerapp update \
-            --name $BACKEND_APP_NAME \
-            --resource-group $RESOURCE_GROUP_NAME \
-            --image $GHCR_REPO/$BACKEND_IMAGE:latest
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+            --name "$BACKEND_APP_NAME" \
+            --resource-group "$RESOURCE_GROUP_NAME" \
+            --image "$GHCR_REPO/$BACKEND_IMAGE:latest"
+          env:
+            BACKEND_APP_NAME: ${{ env.BACKEND_APP_NAME }}
+            BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
+            RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
+            GHCR_REPO: ${{ env.GHCR_REPO }}
+            AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
 
       - name: Update Frontend Container App with New Image
