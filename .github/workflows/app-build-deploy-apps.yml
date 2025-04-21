@@ -57,6 +57,9 @@ jobs:
 
       - name: Update Backend Container App with New Image
         run: |
+          echo $BACKEND_APP_NAME \
+          echo $BACKEND_IMAGE \
+          echo $RESOURCE_GROUP_NAME \
           az containerapp update \
             --name $BACKEND_APP_NAME \
             --resource-group $RESOURCE_GROUP_NAME \
