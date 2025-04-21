@@ -64,12 +64,13 @@ jobs:
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Update Backend Container App with New Image
+          
+      - name: Update Frontend Container App with New Image
         run: |
           az containerapp update \
-            --name $BACKEND_APP_NAME \
+            --name $FRONTEND_APP_NAME \
             --resource-group $RESOURCE_GROUP_NAME \
-            --image $GHCR_REPO/$BACKEND_IMAGE:latest
+            --image $GHCR_REPO/$FRONTEND_IMAGE:latest
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       
