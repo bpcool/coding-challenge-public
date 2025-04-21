@@ -7,6 +7,10 @@ jobs:
   upload-blob:
     runs-on: ubuntu-latest
 
+    env:
+      LOCATION: ${{ secrets.LOCATION }}
+      RESOURCE_GROUP_NAME: ${{ secrets.RESOURCE_GROUP_NAME }}-dev-${{ secrets.LOCATION }}-01
+
     permissions:
         id-token: write 
         contents: read 
@@ -32,6 +36,15 @@ jobs:
             --file ./patient_data.csv \
             --auth-mode login \
             --overwrite
+
+      - name: Trigger ADF Pipeline
+        run: |
+          az datafactory pipeline create-run \
+            --factory-name "adf-teqwerk-dev-centralus-01" \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --name "CopyCSVToMySQLPipeline"
+        env:
+            RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
     
       - name: Azure Logout
         run: |
