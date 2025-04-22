@@ -95,7 +95,7 @@ resource "azurerm_container_app" "backend" {
   }
 
   ingress {
-    external_enabled           = true
+    external_enabled           = false
     allow_insecure_connections = false
     target_port                = 8081  # <- ✅ backend listens here
     transport                  = "auto"
@@ -133,7 +133,7 @@ resource "azurerm_container_app" "frontend" {
   template {
     container {
       name   = "frontend"
-      image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+      image  = "nginxdemos/hello:latest"
       # image  = "ghcr.io/bpcool/frontend:latest"
       cpu    = 0.5
       memory = "1Gi"
