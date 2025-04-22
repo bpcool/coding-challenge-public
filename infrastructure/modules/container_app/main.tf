@@ -134,16 +134,16 @@ resource "azurerm_monitor_diagnostic_setting" "backend_logs" {
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   enabled_log {
-    category = "ContainerAppConsoleLogs"
-  }
+  category = "AppLogs"
+}
 
-  enabled_log {
-    category = "ContainerAppSystemLogs"
-  }
+enabled_log {
+  category = "SystemLogs"
+}
 
- metric {
-    category = "AllMetrics"
-  }
+metric {
+  category = "AllMetrics"
+}
 }
 
 
@@ -217,15 +217,15 @@ resource "azurerm_monitor_diagnostic_setting" "frontend_logs" {
   log_analytics_workspace_id = var.log_analytics_workspace_id
 
   enabled_log {
-    category = "ContainerAppConsoleLogs"
-  }
+  category = "AppLogs"
+}
 
-  enabled_log {
-    category = "ContainerAppSystemLogs"
-  }
+enabled_log {
+  category = "SystemLogs"
+}
 
- metric {
-    category = "AllMetrics"
-  }
+metric {
+  category = "AllMetrics"
+}
 }
 
