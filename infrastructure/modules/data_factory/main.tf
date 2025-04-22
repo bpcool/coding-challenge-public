@@ -76,14 +76,21 @@ resource "azurerm_data_factory_linked_service_azure_blob_storage" "blob" {
   connection_string = azurerm_storage_account.storageac-for-migration.primary_connection_string
 }
 
-resource "azurerm_data_factory_linked_service_mysql" "mysql" {
-  name            = "AzureMySqlLinkedService_ADF" # Name matches your working manual setup
+resource "azurerm_data_factory_linked_custom_service" "azure_mysql" {
+  name            = "AzureMySqlLinkedService_ADF"
   data_factory_id = azurerm_data_factory.this.id
-  
-  # Reference the Integration Runtime that can access the private network
-  integration_runtime_name = azurerm_data_factory_integration_runtime_azure.managed_vnet_ir.name
 
-  connection_string = "server=${var.mysql_fqdn};port=3306;database=${var.mysql_database_name};uid=${var.mysql_admin_username};pwd=${var.mysql_admin_password}" # **AVOID THIS IN PRODUCTION**
+  type = "AzureMySql"
+
+  type_properties_json = jsonencode({
+    connectionString = "server=${var.mysql_fqdn};port=3306;database=${var.mysql_database_name};uid=${var.mysql_admin_username};pwd=${var.mysql_admin_password};sslmode=1;usesystemtruststore=0"
+    # encryptedCredential = "" # optional if you're using ADF-managed credentials or identity
+  })
+
+  integration_runtime {
+    name = azurerm_data_factory_integration_runtime_azure.managed_vnet_ir.name
+  }
+
 }
 
 # ────────────────────────────────────────
@@ -128,7 +135,7 @@ resource "azurerm_data_factory_dataset_mysql" "patient_table" {
   data_factory_id = azurerm_data_factory.this.id
 
   # Link to the MySQL Linked Service
-  linked_service_name = azurerm_data_factory_linked_service_mysql.mysql.name
+  linked_service_name = azurerm_data_factory_linked_custom_service.azure_mysql.name
 
   # Define the table in the MySQL database
   table_name = "patient" # Matches your working manual setup

@@ -133,8 +133,10 @@ resource "azurerm_container_app" "frontend" {
   template {
     container {
       name   = "frontend"
-      image  = "nginxdemos/hello:latest"
+
+      # App build build pipeline will replace the actual image like below
       # image  = "ghcr.io/bpcool/frontend:latest"
+      image  = "nginxdemos/hello:latest"
       cpu    = 0.5
       memory = "1Gi"
 
