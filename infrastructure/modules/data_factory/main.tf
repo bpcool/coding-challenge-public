@@ -157,7 +157,6 @@ resource "azurerm_data_factory_dataset_mysql" "patient_table" {
 # Pipeline
 # ────────────────────────────────────────
 # --- Pipeline ---
-
 # Copy CSV to MySQL Pipeline (Corrected)
 resource "azurerm_data_factory_pipeline" "copy_csv_to_mysql" {
   name            = "CopyCSVToMySQLPipeline" # Name matches your working manual setup
@@ -181,35 +180,77 @@ resource "azurerm_data_factory_pipeline" "copy_csv_to_mysql" {
         "source": {
           "type": "DelimitedTextSource", # Source type from your JSON
           "storeSettings": {
-            "type": "AzureBlobStorageReadSettings" # Store settings from your JSON
-            # recursive: true is in your JSON but part of the Dataset definition in ADF UI,
-            # not typically in the activity's storeSettings in JSON definition.
-            # It's defined on the dataset resource `first_row_as_header = true` in Terraform.
+            "type": "AzureBlobStorageReadSettings",
+            "recursive": true
           },
           "formatSettings": {
-             "type": "DelimitedTextReadSettings" # Format settings from your JSON
+            "type": "DelimitedTextReadSettings" # Format settings from your JSON
           }
         },
         "sink": {
-          "type": "MySqlSink", # Sink type from your JSON (Note: Resource type is AzureMySqlSink, but JSON activity type is MySqlSink)
+          "type": "AzureMySqlSink", 
           "writeBatchSize": 1000, # Matches your JSON (adjusted from 10000)
           "writeBatchTimeout": "00:00:30" # Matches your JSON
         },
         "enableStaging": false, # Matches your JSON
         "translator": { # Translator from your JSON
           "type": "TabularTranslator",
-           # Reference the Terraform Dataset resource names using interpolation
-           "mappings": [
-              { "source": { "name": "id" }, "sink": { "name": "id" } },
-              { "source": { "name": "full_name" }, "sink": { "name": "full_name" } },
-              { "source": { "name": "department" }, "sink": { "name": "department" } },
-              { "source": { "name": "bed_number" }, "sink": { "name": "bed_number" } }
-           ],
-           "typeConversion": true,
-           "typeConversionSettings": {
-              "allowDataTruncation": true,
-              "treatBooleanAsNumber": false
-           }
+          # Reference the Terraform Dataset resource names using interpolation
+          "mappings": [
+            {
+              "source": {
+                "name": "id",
+                "type": "String",
+                "physicalType": "String"
+              },
+              "sink": {
+                "name": "id",
+                "type": "Int32",
+                "physicalType": "int"
+              }
+            },
+            {
+              "source": {
+                "name": "full_name",
+                "type": "String",
+                "physicalType": "String"
+              },
+              "sink": {
+                "name": "full_name",
+                "type": "String",
+                "physicalType": "text"
+              }
+            },
+            {
+              "source": {
+                "name": "department",
+                "type": "String",
+                "physicalType": "String"
+              },
+              "sink": {
+                "name": "department",
+                "type": "String",
+                "physicalType": "text"
+              }
+            },
+            {
+              "source": {
+                "name": "bed_number",
+                "type": "String",
+                "physicalType": "String"
+              },
+              "sink": {
+                "name": "bed_number",
+                "type": "Int32",
+                "physicalType": "int"
+              }
+            }
+          ],
+          "typeConversion": true,
+          "typeConversionSettings": {
+            "allowDataTruncation": true,
+            "treatBooleanAsNumber": false
+          }
         }
       },
       "inputs": [
