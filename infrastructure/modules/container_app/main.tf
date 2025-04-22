@@ -137,10 +137,6 @@ resource "azurerm_monitor_diagnostic_setting" "backend_logs" {
   category = "AppLogs"
 }
 
-enabled_log {
-  category = "SystemLogs"
-}
-
 metric {
   category = "AllMetrics"
 }
@@ -218,10 +214,6 @@ resource "azurerm_monitor_diagnostic_setting" "frontend_logs" {
 
   enabled_log {
   category = "AppLogs"
-}
-
-enabled_log {
-  category = "SystemLogs"
 }
 
 metric {
