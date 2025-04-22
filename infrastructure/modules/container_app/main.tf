@@ -95,7 +95,7 @@ resource "azurerm_container_app" "backend" {
   }
 
   ingress {
-    external_enabled           = false
+    external_enabled           = true
     allow_insecure_connections = false
     target_port                = 8081  # <- ✅ backend listens here
     transport                  = "auto"
