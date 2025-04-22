@@ -1,4 +1,4 @@
-name: Upload github CSV to Azure Blob
+name: 2. Migrate from github CSV to Azure Blob
 
 on:
   workflow_dispatch:
