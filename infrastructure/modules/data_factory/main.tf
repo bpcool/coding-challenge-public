@@ -1,4 +1,6 @@
 
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_storage_account" "storageac-for-migration" {
   name                     = var.storage_account_name_for_upload
   resource_group_name      = var.resource_group_name
@@ -21,6 +23,7 @@ resource "azurerm_storage_container" "data" {
 # ────────────────────────────────────────
 # Azure Data Factory
 # ────────────────────────────────────────
+
 resource "azurerm_data_factory" "this" {
   name                = "adf-teqwerk-dev-${var.location}-01"
   location            = var.location
@@ -37,6 +40,49 @@ resource "azurerm_data_factory" "this" {
     environment = "Development"
   }
 }
+
+resource "azurerm_monitor_diagnostic_setting" "adf_logs" {
+  name                       = "adflogsmonitor-teqwerk-dev-${var.location}-01"
+  target_resource_id         = azurerm_data_factory.this.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "ActivityRuns"
+  }
+
+  enabled_log {
+    category = "PipelineRuns"
+  }
+
+  metric {
+    category = "AllMetrics"
+  }
+}
+
+resource "azurerm_role_assignment" "adf_kv_secrets_get" {
+  principal_id         = azurerm_data_factory.this.identity[0].principal_id
+  role_definition_name = "Key Vault Secrets Officer"
+  scope                = var.azurerm_key_vault_id
+
+  depends_on = [
+    azurerm_data_factory.this
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "adf_secrets_get" {
+  key_vault_id  = var.azurerm_key_vault_id
+  tenant_id     = data.azurerm_client_config.current.tenant_id
+  object_id = azurerm_data_factory.this.identity[0].principal_id
+
+  secret_permissions = [
+    "Get"
+  ]
+
+  depends_on = [
+    azurerm_data_factory.this
+  ]
+}
+
 
 resource "azurerm_data_factory_integration_runtime_azure" "managed_vnet_ir" {
   name                          = "integrationruntimedata-teqwerk-dev-${var.location}-01" # Name matches your working manual setup
@@ -70,6 +116,18 @@ resource "azurerm_data_factory_managed_private_endpoint" "mysql_mpe" {
 # ────────────────────────────────────────
 # Linked Services
 # ────────────────────────────────────────
+resource "azurerm_data_factory_linked_service_key_vault" "keyvault_ls" {
+  name            = "AzureKeyVaultLinkedService"
+  data_factory_id = azurerm_data_factory.this.id
+  key_vault_id    = var.azurerm_key_vault_id
+
+  integration_runtime_name = azurerm_data_factory_integration_runtime_azure.managed_vnet_ir.name
+
+  depends_on = [
+    azurerm_data_factory.this
+  ]
+}
+
 resource "azurerm_data_factory_linked_service_azure_blob_storage" "blob" {
   name              = "AzureBlobStorageLinkedService"
   data_factory_id   = azurerm_data_factory.this.id
@@ -77,21 +135,34 @@ resource "azurerm_data_factory_linked_service_azure_blob_storage" "blob" {
 }
 
 resource "azurerm_data_factory_linked_custom_service" "azure_mysql" {
-  name            = "AzureMySqlLinkedService_ADF"
+  name            = "AzureMySqlLinkedService_ADF" 
   data_factory_id = azurerm_data_factory.this.id
 
-  type = "AzureMySql"
+  type = "AzureMySql" 
 
   type_properties_json = jsonencode({
-    connectionString = "server=${var.mysql_fqdn};port=3306;database=${var.mysql_database_name};uid=${var.mysql_admin_username};pwd=${var.mysql_admin_password};sslmode=1;usesystemtruststore=0"
-    # encryptedCredential = "" # optional if you're using ADF-managed credentials or identity
+    connectionString = "server=${var.mysql_fqdn};port=3306;database=${var.mysql_database_name};uid=${var.mysql_admin_username};sslmode=1;usesystemtruststore=0",
+    "password": {
+      "type": "AzureKeyVaultSecret",
+      "store": {
+        "referenceName": azurerm_data_factory_linked_service_key_vault.keyvault_ls.name, 
+        "type": "LinkedServiceReference"
+      },
+      "secretName": var.mysql_admin_password_keyvault_name
+    }
   })
 
   integration_runtime {
     name = azurerm_data_factory_integration_runtime_azure.managed_vnet_ir.name
   }
 
+  depends_on = [
+      azurerm_data_factory.this, 
+      azurerm_data_factory_integration_runtime_azure.managed_vnet_ir, 
+      azurerm_data_factory_linked_service_key_vault.keyvault_ls, 
+  ]
 }
+
 
 # ────────────────────────────────────────
 # Datasets
@@ -131,14 +202,12 @@ resource "azurerm_data_factory_dataset_delimited_text" "blob_csv" {
 }
 
 resource "azurerm_data_factory_dataset_mysql" "patient_table" {
-  name            = "AzureMySqlTable1" # Name matches your working manual setup / pipeline JSON
+  name            = "AzureMySqlTable1" 
   data_factory_id = azurerm_data_factory.this.id
 
-  # Link to the MySQL Linked Service
   linked_service_name = azurerm_data_factory_linked_custom_service.azure_mysql.name
 
-  # Define the table in the MySQL database
-  table_name = "patient" # Matches your working manual setup
+  table_name = "patient" 
 
   schema_column {
     name = "id"
@@ -157,7 +226,6 @@ resource "azurerm_data_factory_dataset_mysql" "patient_table" {
     type = "Int32"
   }
 }
-
 
 
 # ────────────────────────────────────────

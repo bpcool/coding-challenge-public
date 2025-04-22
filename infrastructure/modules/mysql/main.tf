@@ -41,12 +41,13 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns-vn-link" {
 #   }
 
 # }
+
 resource "azurerm_mysql_flexible_server" "mysqlserver" {
   name                   = "mysqlfs-teqwerk-dev-${var.location}-01"
   resource_group_name    = var.resource_group_name
   location               = var.location
   administrator_login    = var.mysql_admin_username
-  administrator_password = var.mysql_admin_password
+  administrator_password = var.mysql_admin_password_from_keyvault
   backup_retention_days  = 7
   
   # Connection via Private endpoint and / or Public access (allowed IP addresses) 
@@ -119,5 +120,24 @@ resource "azurerm_private_endpoint" "mysql_pe" {
 
   tags = {
     environment = "Development"
+  }
+}
+
+
+resource "azurerm_monitor_diagnostic_setting" "flexi_mysql_logs" {
+  name               = "mysqllogsmonitor-teqwerk-dev-${var.location}-01"
+  target_resource_id = azurerm_mysql_flexible_server.mysqlserver.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "MySqlAuditLogs"
+  }
+
+  enabled_log {
+    category = "MySqlSlowLogs"
+  }
+
+  metric {
+    category = "AllMetrics"
   }
 }

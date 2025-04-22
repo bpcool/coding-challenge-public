@@ -23,9 +23,12 @@ variable "mysql_admin_username" {
   type = string
 }
 
-variable "mysql_admin_password" {
-  type      = string
-  sensitive = true
+variable "azurerm_key_vault_id" {
+   type    = string
+}
+
+variable "mysql_admin_password_keyvault_name" {
+   type    = string
 }
 
 variable "mysql_database_name" {

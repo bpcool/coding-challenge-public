@@ -23,8 +23,11 @@ variable "mysql_admin_username" {
   type = string
 }
 
-variable "mysql_admin_password" {
+variable "mysql_admin_password_from_keyvault" {
   type      = string
   sensitive = true
 }
 
+variable "log_analytics_workspace_id" {
+  type = string
+}

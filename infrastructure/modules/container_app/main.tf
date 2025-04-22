@@ -63,12 +63,25 @@ resource "azurerm_container_app" "backend" {
   }
 
   template {
+
+    min_replicas = 1
+    max_replicas = 10
+
+    custom_scale_rule {
+      name             = "cpu-scaler"
+      custom_rule_type = "cpu"
+      metadata = {
+        type  = "Utilization"
+        value = "70"
+      }
+    }
+    
     container {
       name   = "backend"
       image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
       # image  = "ghcr.io/bpcool/backend:latest"
-      cpu    = 0.5
-      memory = "1Gi"
+      cpu    = 1.0
+      memory = "2.0Gi"
 
       # Env variables for MySQL connection
       env {
@@ -85,7 +98,7 @@ resource "azurerm_container_app" "backend" {
       }
       env {
         name  = "DB_PASSWORD"
-        value = var.mysql_admin_password
+        value = "secrets://${var.azurerm_key_vault_id}/${var.mysql_admin_password_keyvault_name}" 
       }
       env {
         name  = "DB_NAME"
@@ -105,6 +118,7 @@ resource "azurerm_container_app" "backend" {
     }
   }
 
+  
   tags = {
     environment = "Development"
   }
@@ -114,6 +128,23 @@ resource "azurerm_container_app" "backend" {
   ]
 }
 
+resource "azurerm_monitor_diagnostic_setting" "backend_logs" {
+  name               = "backendlogsmonitor-teqwerk-dev-${var.location}-01"
+  target_resource_id = azurerm_container_app.backend.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "ContainerAppConsoleLogs"
+  }
+
+  enabled_log {
+    category = "ContainerAppSystemLogs"
+  }
+
+ metric {
+    category = "AllMetrics"
+  }
+}
 
 
 # ───────
@@ -131,6 +162,10 @@ resource "azurerm_container_app" "frontend" {
   }
 
   template {
+
+    min_replicas = 0
+    max_replicas = 5
+
     container {
       name   = "frontend"
 
@@ -140,11 +175,15 @@ resource "azurerm_container_app" "frontend" {
       cpu    = 0.5
       memory = "1Gi"
 
-      # with http for testing
       env {
         name  = "BACKEND_URL"
         value = "https://${azurerm_container_app.backend.ingress[0].fqdn}"
       }
+      
+    }
+    http_scale_rule {
+      name                = "http-rule"
+      concurrent_requests = 50
     }
   }
 
@@ -159,7 +198,6 @@ resource "azurerm_container_app" "frontend" {
     }
   }
 
-
   tags = {
     environment = "Development"
   }
@@ -169,3 +207,25 @@ resource "azurerm_container_app" "frontend" {
     azurerm_container_app_environment.main
   ]
 }
+
+
+# Log & Monitor
+# ---------------
+resource "azurerm_monitor_diagnostic_setting" "frontend_logs" {
+  name               = "frontendlogsmonitor-teqwerk-dev-${var.location}-01"
+  target_resource_id = azurerm_container_app.frontend.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "ContainerAppConsoleLogs"
+  }
+
+  enabled_log {
+    category = "ContainerAppSystemLogs"
+  }
+
+ metric {
+    category = "AllMetrics"
+  }
+}
+

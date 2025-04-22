@@ -29,10 +29,19 @@ variable "mysql_admin_username" {
    type    = string
 }
 
-variable "mysql_admin_password" {
-   type    = string
+variable "log_analytics_workspace_id" {
+  type = string
 }
 
 variable "mysql_database_name" {
    type    = string
 }
+
+variable "azurerm_key_vault_id" {
+   type    = string
+}
+
+variable "mysql_admin_password_keyvault_name" {
+   type    = string
+}
+
