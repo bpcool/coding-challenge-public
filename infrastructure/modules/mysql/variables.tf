@@ -19,10 +19,6 @@ variable "managed_identity_id" {
   type = string
 }
 
-# variable "network_security_group_id" {
-#   type = string
-# }
-
 variable "mysql_admin_username" {
   type = string
 }

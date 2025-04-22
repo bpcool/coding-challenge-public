@@ -20,7 +20,6 @@ module "mysql" {
   resource_group_name  = module.network.resource_group_name
   virtual_network_name = module.network.virtual_network_name
   virtual_network_id   = module.network.virtual_network_id
-  # network_security_group_id = module.network.network_security_group_id
   location             = module.network.location
   mysql_admin_username = var.mysql_admin_username
   mysql_admin_password = var.mysql_admin_password

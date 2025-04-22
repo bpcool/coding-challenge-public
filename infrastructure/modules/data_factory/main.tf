@@ -171,29 +171,29 @@ resource "azurerm_data_factory_pipeline" "copy_csv_to_mysql" {
         "timeout": "7.00:00:00",
         "retry": 0,
         "retryIntervalInSeconds": 30,
-        "secureOutput": false, # Consider true for sensitive data logging
+        "secureOutput": false,
         "secureInput": false
       },
       "typeProperties": {
         "source": {
-          "type": "DelimitedTextSource", # Source type from your JSON
+          "type": "DelimitedTextSource",
           "storeSettings": {
             "type": "AzureBlobStorageReadSettings",
             "recursive": true
           },
           "formatSettings": {
-            "type": "DelimitedTextReadSettings" # Format settings from your JSON
+            "type": "DelimitedTextReadSettings" 
           }
         },
         "sink": {
           "type": "AzureMySqlSink", 
-          "writeBatchSize": 1000, # Matches your JSON (adjusted from 10000)
-          "writeBatchTimeout": "00:00:30" # Matches your JSON
+          "writeBatchSize": 1000, 
+          "writeBatchTimeout": "00:00:30" 
         },
-        "enableStaging": false, # Matches your JSON
-        "translator": { # Translator from your JSON
+        "enableStaging": false, 
+        "translator": { 
           "type": "TabularTranslator",
-          # Reference the Terraform Dataset resource names using interpolation
+          
           "mappings": [
             {
               "source": {
