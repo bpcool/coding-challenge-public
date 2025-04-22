@@ -105,22 +105,22 @@ resource "azurerm_data_factory_dataset_delimited_text" "blob_csv" {
   encoding            = "UTF-8"
   first_row_as_header = true
 
-  # schema_column {
-  #   name = "id"
-  #   type = "String"
-  # }
-  # schema_column {
-  #   name = "full_name"
-  #   type = "String"
-  # }
-  #  schema_column {
-  #   name = "department"
-  #   type = "String"
-  # }
-  # schema_column {
-  #   name = "bed_number"
-  #   type = "String"
-  # }
+  schema_column {
+    name = "id"
+    type = "String"
+  }
+  schema_column {
+    name = "full_name"
+    type = "String"
+  }
+   schema_column {
+    name = "department"
+    type = "String"
+  }
+  schema_column {
+    name = "bed_number"
+    type = "String"
+  }
 }
 
 resource "azurerm_data_factory_dataset_mysql" "patient_table" {
@@ -133,22 +133,22 @@ resource "azurerm_data_factory_dataset_mysql" "patient_table" {
   # Define the table in the MySQL database
   table_name = "patient" # Matches your working manual setup
 
-  # schema_column {
-  #   name = "id"
-  #   type = "Int32"
-  # }
-  # schema_column {
-  #   name = "full_name"
-  #   type = "String"
-  # }
-  #  schema_column {
-  #   name = "department"
-  #   type = "String"
-  # }
-  # schema_column {
-  #   name = "bed_number"
-  #   type = "Int32"
-  # }
+  schema_column {
+    name = "id"
+    type = "Int32"
+  }
+  schema_column {
+    name = "full_name"
+    type = "String"
+  }
+   schema_column {
+    name = "department"
+    type = "String"
+  }
+  schema_column {
+    name = "bed_number"
+    type = "Int32"
+  }
 }
 
 
@@ -156,20 +156,18 @@ resource "azurerm_data_factory_dataset_mysql" "patient_table" {
 # ────────────────────────────────────────
 # Pipeline
 # ────────────────────────────────────────
-# --- Pipeline ---
-# Copy CSV to MySQL Pipeline (Corrected)
+
 resource "azurerm_data_factory_pipeline" "copy_csv_to_mysql" {
-  name            = "CopyCSVToMySQLPipeline" # Name matches your working manual setup
+  name            = "CopyCSVToMySQLPipeline" 
   data_factory_id = azurerm_data_factory.this.id
 
-  # activities_json needs to match your working pipeline JSON,
-  # referencing the Terraform-managed Dataset names.
+
   activities_json = jsonencode([
     {
-      "name": "CopyPatientData", # Activity name from your JSON
+      "name": "CopyPatientData", 
       "type": "Copy",
       "dependsOn": [],
-      "policy": { # Policy from your JSON
+      "policy": { 
         "timeout": "7.00:00:00",
         "retry": 0,
         "retryIntervalInSeconds": 30,
