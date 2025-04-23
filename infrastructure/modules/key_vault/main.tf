@@ -19,27 +19,43 @@ resource "azurerm_key_vault" "secrets_kv" {
     environment = "Development"
   }
 
-  # access_policy {
-  #   tenant_id = data.azurerm_client_config.current.tenant_id
-  #   object_id = data.azurerm_client_config.current.object_id
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
 
-  #   key_permissions = [
-  #     "Get",
-  #   ]
+    key_permissions = [
+      "Get",
+    ]
 
-  #   secret_permissions = [
-  #     "Get",
-  #     "List"
-  #   ]
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+      "Delete",
+      "Purge",
+      "Recover"
+    ]
 
-  #   storage_permissions = [
-  #     "Get",
-  #   ]
-  # }
+    storage_permissions = [
+      "Get",
+    ]
+  }
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = var.managed_identity_principal_id  
+
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+      "Delete"
+    ]
+  }
 }
 
 resource "azurerm_key_vault_secret" "mysql_admin_password_secret" {
-  name         = "MysqlAdminPassword" 
+  name         = "mysqladminpassword" 
   value        = var.mysql_admin_password 
   key_vault_id = azurerm_key_vault.secrets_kv.id
   content_type = "password"
@@ -61,4 +77,6 @@ resource "azurerm_monitor_diagnostic_setting" "key_vault_logs" {
     category = "AllMetrics"
    
   }
+
+  depends_on = [azurerm_key_vault.secrets_kv]
 }

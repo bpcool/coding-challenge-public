@@ -31,6 +31,17 @@ variable "mysql_admin_password_keyvault_name" {
    type    = string
 }
 
+variable "mysql_admin_password_from_keyvault" {
+  type      = string
+  sensitive = true
+}
+
+variable "azurerm_key_vault_secret_id" {
+  type      = string
+  sensitive = true
+}
+
+
 variable "mysql_database_name" {
   type      = string
 }

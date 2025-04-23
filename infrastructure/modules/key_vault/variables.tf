@@ -18,3 +18,7 @@ variable "log_analytics_workspace_id" {
   type = string
 }
 
+variable "managed_identity_principal_id" {
+  type = string
+}
+

@@ -57,6 +57,8 @@ resource "azurerm_monitor_diagnostic_setting" "adf_logs" {
   metric {
     category = "AllMetrics"
   }
+
+  depends_on = [azurerm_data_factory.this]
 }
 
 resource "azurerm_role_assignment" "adf_kv_secrets_get" {

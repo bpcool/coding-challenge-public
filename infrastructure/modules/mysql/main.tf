@@ -140,4 +140,6 @@ resource "azurerm_monitor_diagnostic_setting" "flexi_mysql_logs" {
   metric {
     category = "AllMetrics"
   }
+
+  depends_on = [azurerm_mysql_flexible_server.mysqlserver]
 }

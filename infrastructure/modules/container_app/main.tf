@@ -46,6 +46,22 @@ resource "azurerm_container_app_environment" "main" {
 
   }
 
+  resource "azurerm_monitor_diagnostic_setting" "container_app_env_logs" {
+    name               = "appenvlogsmonitor-teqwerk-dev-${var.location}-01"
+    target_resource_id = azurerm_container_app_environment.main.id
+    log_analytics_workspace_id = var.log_analytics_workspace_id
+    
+    enabled_log {
+      category_group = "Audit"
+    }
+    
+    metric {
+      category = "AllMetrics"
+      enabled  = false
+    }
+    depends_on = [azurerm_container_app_environment.main]
+}
+
 
 
 # ───────
@@ -60,6 +76,12 @@ resource "azurerm_container_app" "backend" {
   identity {
     type         = "UserAssigned"
     identity_ids = [var.managed_identity_id]
+  }
+
+  secret {
+    name                 = var.mysql_admin_password_keyvault_name
+    key_vault_secret_id = var.azurerm_key_vault_secret_id
+    identity = var.managed_identity_id
   }
 
   template {
@@ -98,7 +120,8 @@ resource "azurerm_container_app" "backend" {
       }
       env {
         name  = "DB_PASSWORD"
-        value = "secrets://${var.azurerm_key_vault_id}/${var.mysql_admin_password_keyvault_name}" 
+        secret_name = var.mysql_admin_password_keyvault_name
+        # value = "secrets://${var.azurerm_key_vault_id}/${var.mysql_admin_password_keyvault_name}" 
       }
       env {
         name  = "DB_NAME"
@@ -128,19 +151,7 @@ resource "azurerm_container_app" "backend" {
   ]
 }
 
-resource "azurerm_monitor_diagnostic_setting" "backend_logs" {
-  name               = "backendlogsmonitor-teqwerk-dev-${var.location}-01"
-  target_resource_id = azurerm_container_app.backend.id
-  log_analytics_workspace_id = var.log_analytics_workspace_id
 
-  enabled_log {
-  category = "AppLogs"
-}
-
-metric {
-  category = "AllMetrics"
-}
-}
 
 
 # ───────
@@ -202,22 +213,5 @@ resource "azurerm_container_app" "frontend" {
     azurerm_container_app.backend,
     azurerm_container_app_environment.main
   ]
-}
-
-
-# Log & Monitor
-# ---------------
-resource "azurerm_monitor_diagnostic_setting" "frontend_logs" {
-  name               = "frontendlogsmonitor-teqwerk-dev-${var.location}-01"
-  target_resource_id = azurerm_container_app.frontend.id
-  log_analytics_workspace_id = var.log_analytics_workspace_id
-
-  enabled_log {
-  category = "AppLogs"
-}
-
-metric {
-  category = "AllMetrics"
-}
 }
 

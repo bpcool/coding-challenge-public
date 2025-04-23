@@ -17,11 +17,12 @@ module "log_analytics" {
 
 
 module "key_vault" {
-  source                     = "./modules/key_vault"
-  resource_group_name        = module.network.resource_group_name
-  location                   = var.location
-  mysql_admin_password       = var.mysql_admin_password
-  log_analytics_workspace_id = module.log_analytics.log_analytics_workspace_id
+  source                        = "./modules/key_vault"
+  resource_group_name           = module.network.resource_group_name
+  location                      = var.location
+  mysql_admin_password          = var.mysql_admin_password
+  log_analytics_workspace_id    = module.log_analytics.log_analytics_workspace_id
+  managed_identity_principal_id = module.network.managed_identity_principal_id
 
   depends_on = [module.network]
 }
@@ -56,7 +57,6 @@ module "data_factory" {
 
   mysql_flexible_server_id = module.mysql.mysql_flexible_server_id
   mysql_admin_username     = var.mysql_admin_username
-  # mysql_admin_password     = var.mysql_admin_password
   mysql_database_name = module.mysql.mysql_database_name
   mysql_fqdn          = module.mysql.mysql_flexible_server_fqdn
 
@@ -73,6 +73,8 @@ module "container_app" {
 
   azurerm_key_vault_id               = module.key_vault.azurerm_key_vault_id
   mysql_admin_password_keyvault_name = module.key_vault.mysql_admin_password_keyvault_name
+  mysql_admin_password_from_keyvault = module.key_vault.mysql_admin_password_from_keyvault
+  azurerm_key_vault_secret_id        = module.key_vault.azurerm_key_vault_secret_id
 
   mysql_admin_username       = var.mysql_admin_username
   mysql_database_name        = module.mysql.mysql_database_name
