@@ -24,7 +24,7 @@ module "key_vault" {
   log_analytics_workspace_id    = module.log_analytics.log_analytics_workspace_id
   managed_identity_principal_id = module.network.managed_identity_principal_id
 
-  depends_on = [module.log_analytics,module.network]
+  depends_on = [module.log_analytics, module.network]
 }
 
 module "mysql" {
