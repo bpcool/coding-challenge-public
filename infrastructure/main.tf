@@ -57,8 +57,8 @@ module "data_factory" {
 
   mysql_flexible_server_id = module.mysql.mysql_flexible_server_id
   mysql_admin_username     = var.mysql_admin_username
-  mysql_database_name = module.mysql.mysql_database_name
-  mysql_fqdn          = module.mysql.mysql_flexible_server_fqdn
+  mysql_database_name      = module.mysql.mysql_database_name
+  mysql_fqdn               = module.mysql.mysql_flexible_server_fqdn
 
   depends_on = [module.mysql, module.key_vault]
 }
