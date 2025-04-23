@@ -1,5 +1,29 @@
 const backendUrl = '__BACKEND_URL__';
+const msalConfig = {
+    auth: {
+        clientId: '850f61bf-a2da-4b73-9789-48a439750d93',
+        authority: 'https://login.microsoftonline.com/4c9d30b9-be34-4e1e-9a99-115a85f21d38',
+        redirectUri: window.location.origin
+    }
+};
 
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+async function signIn() {
+    const loginRequest = {
+        scopes: ['User.Read']
+    };
+    try {
+        const loginResponse = await msalInstance.loginPopup(loginRequest);
+        sessionStorage.setItem('msalToken', loginResponse.accessToken);
+        fetchPatients(); // load data only after auth
+    } catch (error) {
+        console.error('Login failed:', error);
+        // msalInstance.loginRedirect(loginRequest);
+    }
+}
+
+window.onload = signIn;
 
 async function fetchPatients() {
     const response = await fetch(`${backendUrl}/patients`);
@@ -62,4 +86,4 @@ async function deletePatient(patientId) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', fetchPatients);
+// document.addEventListener('DOMContentLoaded', fetchPatients);

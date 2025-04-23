@@ -106,17 +106,16 @@ resource "azurerm_container_app" "backend" {
       memory = "2.0Gi"
 
       liveness_probe {
-        transport                = "HTTP"
+        transport                = "HTTPS"
         port                     = 8081
         path                     = "/health"
-        interval_seconds         = 10
-        timeout                  = 2
         initial_delay            = 5
-        failure_count_threshold = 3
+        interval_seconds          = 10
+
       }
 
       readiness_probe {
-        transport                 = "HTTP"
+        transport                 = "HTTPS"
         port                      = 8081
         path                      = "/health"
         interval_seconds          = 10
@@ -188,6 +187,7 @@ resource "azurerm_container_app" "frontend" {
   }
 
   template {
+    
 
     min_replicas = 0
     max_replicas = 5
@@ -207,9 +207,9 @@ resource "azurerm_container_app" "frontend" {
       }
 
        liveness_probe {
-        transport                = "HTTP"
-        port                     = 80
-        path                     = "/"
+        transport                = "HTTPS"
+        port                     = 443
+        path                     = "/health"
         interval_seconds         = 10
         timeout                  = 2
         initial_delay            = 5
@@ -217,9 +217,9 @@ resource "azurerm_container_app" "frontend" {
       }
 
       readiness_probe {
-        transport                 = "HTTP"
-        port                      = 80
-        path                      = "/"
+        transport                 = "HTTPS"
+        port                      = 443
+        path                      = "/health"
         interval_seconds          = 10
         timeout                   = 2
         initial_delay             = 2
