@@ -37,31 +37,14 @@ resource "azurerm_container_app_environment" "main" {
 
     tags = {
     environment = "Development"
-  }
-
-  depends_on = [
-      azurerm_subnet.app,
-      var.log_analytics_workspace_id
-  ]
-
-  }
-
-  resource "azurerm_monitor_diagnostic_setting" "container_app_env_logs" {
-    name               = "appenvlogsmonitor-teqwerk-dev-${var.location}-01"
-    target_resource_id = azurerm_container_app_environment.main.id
-    log_analytics_workspace_id = var.log_analytics_workspace_id
-    
-    enabled_log {
-      category_group = "Audit"
     }
-    
-    metric {
-      category = "AllMetrics"
-      enabled  = false
-    }
-    depends_on = [azurerm_container_app_environment.main]
-}
 
+    depends_on = [
+        azurerm_subnet.app,
+        var.log_analytics_workspace_id
+    ]
+
+  }
 
 
 # ───────
@@ -254,4 +237,20 @@ resource "azurerm_container_app" "frontend" {
     azurerm_container_app_environment.main
   ]
 }
+
+resource "azurerm_monitor_diagnostic_setting" "container_app_env_logs" {
+    name               = "appenvlogsmonitor-teqwerk-dev-${var.location}-01"
+    target_resource_id = azurerm_container_app_environment.main.id
+    log_analytics_workspace_id = var.log_analytics_workspace_id
+    
+    enabled_log {
+      category_group = "Audit"
+    }
+    
+    metric {
+      category = "AllMetrics"
+      enabled  = false
+    }
+    depends_on = [azurerm_container_app_environment.main, azurerm_container_app.backend, azurerm_container_app.frontend]
+  }
 
