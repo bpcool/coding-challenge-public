@@ -105,6 +105,27 @@ resource "azurerm_container_app" "backend" {
       cpu    = 1.0
       memory = "2.0Gi"
 
+      liveness_probe {
+        transport                = "HTTP"
+        port                     = 8081
+        path                     = "/health"
+        interval_seconds         = 10
+        timeout                  = 2
+        initial_delay            = 5
+        failure_count_threshold = 3
+      }
+
+      readiness_probe {
+        transport                 = "HTTP"
+        port                      = 8081
+        path                      = "/health"
+        interval_seconds          = 10
+        timeout                   = 2
+        initial_delay             = 2
+        success_count_threshold   = 1
+        failure_count_threshold   = 3
+      }
+
       # Env variables for MySQL connection
       env {
         name  = "DB_HOST"
@@ -152,8 +173,6 @@ resource "azurerm_container_app" "backend" {
 }
 
 
-
-
 # ───────
 # Frontend Container App
 # ───────
@@ -185,6 +204,27 @@ resource "azurerm_container_app" "frontend" {
       env {
         name  = "BACKEND_URL"
         value = "https://${azurerm_container_app.backend.ingress[0].fqdn}"
+      }
+
+       liveness_probe {
+        transport                = "HTTP"
+        port                     = 80
+        path                     = "/"
+        interval_seconds         = 10
+        timeout                  = 2
+        initial_delay            = 5
+        failure_count_threshold = 3
+      }
+
+      readiness_probe {
+        transport                 = "HTTP"
+        port                      = 80
+        path                      = "/"
+        interval_seconds          = 10
+        timeout                   = 2
+        initial_delay             = 2
+        success_count_threshold   = 1
+        failure_count_threshold   = 3
       }
       
     }
