@@ -190,9 +190,9 @@ resource "azurerm_container_app" "frontend" {
       }
 
        liveness_probe {
-        transport                = "HTTPS"
-        port                     = 443
-        path                     = "/health"
+        transport                = "HTTP"
+        port                     = 80
+        path                     = "/"
         interval_seconds         = 10
         timeout                  = 2
         initial_delay            = 5
@@ -200,9 +200,9 @@ resource "azurerm_container_app" "frontend" {
       }
 
       readiness_probe {
-        transport                 = "HTTPS"
-        port                      = 443
-        path                      = "/health"
+        transport                 = "HTTP"
+        port                      = 80
+        path                      = "/"
         interval_seconds          = 10
         timeout                   = 2
         initial_delay             = 2
@@ -238,19 +238,4 @@ resource "azurerm_container_app" "frontend" {
   ]
 }
 
-# resource "azurerm_monitor_diagnostic_setting" "container_app_env_logs" {
-#     name               = "appenvlogsmonitor-teqwerk-dev-${var.location}-01"
-#     target_resource_id = azurerm_container_app_environment.main.id
-#     log_analytics_workspace_id = var.log_analytics_workspace_id
-    
-#     enabled_log {
-#       category_group = "Audit"
-#     }
-    
-#     metric {
-#       category = "AllMetrics"
-#       enabled  = false
-#     }
-#     depends_on = [azurerm_container_app_environment.main, azurerm_container_app.backend, azurerm_container_app.frontend]
-#   }
 

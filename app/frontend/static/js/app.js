@@ -14,7 +14,7 @@ async function signIn() {
         scopes: ['User.Read']
     };
     try {
-        const loginResponse = await msalInstance.loginPopup(loginRequest);
+        const loginResponse = await msalInstance.loginRedirect(loginRequest);
         sessionStorage.setItem('msalToken', loginResponse.accessToken);
         fetchPatients(); // load data only after auth
     } catch (error) {
