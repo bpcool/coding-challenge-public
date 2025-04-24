@@ -92,7 +92,7 @@ resource "azurerm_container_app" "backend" {
         transport                = "HTTPS"
         port                     = 8081
         path                     = "/health"
-        initial_delay            = 5
+        initial_delay            = 2
         interval_seconds          = 10
 
       }
@@ -101,7 +101,7 @@ resource "azurerm_container_app" "backend" {
         transport                 = "HTTPS"
         port                      = 8081
         path                      = "/health"
-        initial_delay             = 5
+        initial_delay             = 2
         interval_seconds          = 10
 
         timeout                   = 4
@@ -194,21 +194,24 @@ resource "azurerm_container_app" "frontend" {
         transport                = "HTTP"
         port                     = 80
         path                     = "/"
+        
+        initial_delay            = 2
         interval_seconds         = 10
+
         timeout                  = 2
-        initial_delay            = 5
-        failure_count_threshold = 3
+        failure_count_threshold = 5
       }
 
       readiness_probe {
         transport                 = "HTTP"
         port                      = 80
         path                      = "/"
-        interval_seconds          = 10
-        timeout                   = 2
         initial_delay             = 2
+        interval_seconds          = 10
+
+        timeout                   = 2
         success_count_threshold   = 1
-        failure_count_threshold   = 3
+        failure_count_threshold   = 8
       }
       
     }
