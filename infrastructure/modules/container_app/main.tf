@@ -92,17 +92,12 @@ resource "azurerm_container_app" "backend" {
         transport                = "HTTPS"
         port                     = 8081
         path                     = "/health"
-        initial_delay            = 0
-        interval_seconds          = 10
-
       }
 
       readiness_probe {
         transport                 = "HTTPS"
         port                      = 8081
         path                      = "/health"
-        initial_delay             = 0
-        interval_seconds          = 10
       }
 
       # Env variables for MySQL connection
