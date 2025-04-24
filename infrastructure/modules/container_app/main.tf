@@ -88,17 +88,19 @@ resource "azurerm_container_app" "backend" {
       cpu    = 1.0
       memory = "2.0Gi"
 
-      liveness_probe {
-        transport                = "HTTPS"
-        port                     = 8081
-        path                     = "/health"
-      }
+      ## Terraform added custom default value which slow down container 
 
-      readiness_probe {
-        transport                 = "HTTPS"
-        port                      = 8081
-        path                      = "/health"
-      }
+      # liveness_probe {
+      #   transport                = "HTTPS"
+      #   port                     = 8081
+      #   path                     = "/health"
+      # }
+
+      # readiness_probe {
+      #   transport                 = "HTTPS"
+      #   port                      = 8081
+      #   path                      = "/health"
+      # }
 
       # Env variables for MySQL connection
       env {
