@@ -83,24 +83,29 @@ resource "azurerm_container_app" "backend" {
     
     container {
       name   = "backend"
-      image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
-      # image  = "ghcr.io/bpcool/backend:latest"
+      image  = "ghcr.io/bpcool/backend:latest"
       cpu    = 1.0
       memory = "2.0Gi"
 
       ## Terraform added custom default value which slow down container 
 
-      # liveness_probe {
-      #   transport                = "HTTPS"
-      #   port                     = 8081
-      #   path                     = "/health"
-      # }
+      liveness_probe {
+        transport                = "HTTPS"
+        port                     = 8081
+        path                     = "/health"
+      }
 
-      # readiness_probe {
-      #   transport                 = "HTTPS"
-      #   port                      = 8081
-      #   path                      = "/health"
-      # }
+      readiness_probe {
+        transport                 = "HTTPS"
+        port                      = 8081
+        path                      = "/health"
+      }
+
+      startup_probe {
+        transport                = "HTTPS"
+        port                      = 8081
+        path                      = "/health"
+      }
 
       # Env variables for MySQL connection
       env {
