@@ -12,10 +12,10 @@ on:
     paths:
       - 'app/**'
   workflow_dispatch:      # ✅ Manual trigger option
-  workflow_run:
-    workflows: ["1. Infrastructure deployment using Terraform with OpenID connect"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["1. Infrastructure deployment using Terraform with OpenID connect"]
+  #   types:
+  #     - completed
 
 jobs:
   build-and-deploy:
