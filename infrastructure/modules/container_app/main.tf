@@ -89,24 +89,6 @@ resource "azurerm_container_app" "backend" {
 
       ## Terraform added custom default value which slow down container 
 
-      liveness_probe {
-        transport                = "HTTPS"
-        port                     = 8081
-        path                     = "/health"
-      }
-
-      readiness_probe {
-        transport                 = "HTTPS"
-        port                      = 8081
-        path                      = "/health"
-      }
-
-      startup_probe {
-        transport                = "HTTPS"
-        port                      = 8081
-        path                      = "/health"
-      }
-
       # Env variables for MySQL connection
       env {
         name  = "DB_HOST"
@@ -188,29 +170,7 @@ resource "azurerm_container_app" "frontend" {
         value = "https://${azurerm_container_app.backend.ingress[0].fqdn}"
       }
 
-       liveness_probe {
-        transport                = "HTTP"
-        port                     = 80
-        path                     = "/"
-        
-        initial_delay            = 2
-        interval_seconds         = 10
-
-        timeout                  = 2
-        failure_count_threshold = 5
-      }
-
-      readiness_probe {
-        transport                 = "HTTP"
-        port                      = 80
-        path                      = "/"
-        initial_delay             = 2
-        interval_seconds          = 10
-
-        timeout                   = 2
-        success_count_threshold   = 1
-        failure_count_threshold   = 8
-      }
+   
       
     }
     http_scale_rule {
