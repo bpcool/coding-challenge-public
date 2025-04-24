@@ -16,14 +16,16 @@ async function signIn() {
     try {
         const loginResponse = await msalInstance.loginRedirect(loginRequest);
         sessionStorage.setItem('msalToken', loginResponse.accessToken);
-        fetchPatients(); // load data only after auth
+        // fetchPatients();
     } catch (error) {
         console.error('Login failed:', error);
-        // msalInstance.loginRedirect(loginRequest);
+        msalInstance.loginRedirect(loginRequest);
     }
 }
 
 window.onload = signIn;
+
+
 
 async function fetchPatients() {
     const response = await fetch(`${backendUrl}/patients`);
@@ -86,4 +88,7 @@ async function deletePatient(patientId) {
     }
 }
 
+setTimeout(() => {
+    fetchPatients(); // load data only after auth
+}, 2000);
 // document.addEventListener('DOMContentLoaded', fetchPatients);
